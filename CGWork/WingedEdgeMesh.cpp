@@ -36,10 +36,7 @@ WingedEdgeMesh::WingedEdgeMesh(const WingedEdgeMesh & other) {
 		
 		// Create the face.
 		Face *pf = new Face();
-		pf->normal = (*face_itr)->normal;
-		pf->D = (*face_itr)->D;
-		pf->normal_pt1 = (*face_itr)->normal_pt1;
-		pf->normal_pt2 = (*face_itr)->normal_pt2;
+		pf->setNormal((*face_itr)->getNormal());
 
 		// Iterate over vertices with two iterators, one pointing at the current vertex and the other at the next one.
 		auto v_itr = other_f_vertices.begin();
@@ -149,37 +146,16 @@ void WingedEdgeMesh::transform(const Matrix4d & transMat) {
 	}
 	
 	for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-		(*f)->transformNormal(transMat);
-	}
-
-	/*for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
 		Vector4d n = transMat * (*f)->getNormal();
 		Vector4d A = (*f)->getVertices().back()->getCoord(); 
 		(*f)->setNormal(n);
 		(*f)->setD(dot_product(n, A));
-	}*/
-}
-
-void WingedEdgeMesh::backFaceCulling(const Vector4d & cameraP, const Vector4d & look, const Matrix4d & modelMat) {
-	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-		Vector4d n = modelMat * (*f_itr)->getNormal();
-		Vector4d v = modelMat * (*f_itr)->getVertices().back()->getCoord() - cameraP;
-		//Vector4d v = Vector4d(0, 0, -1);
-		if (dot_product(n, v) > 0) {
-			(*f_itr)->setBackFacing(true);
-		}
-		else {
-			(*f_itr)->setBackFacing(false);
-		}
 	}
 }
 
 void WingedEdgeMesh::homegenize() {
 	for (auto v_itr = vertexList.begin(); v_itr != vertexList.end(); ++v_itr) {
 		(*v_itr)->homegenize();
-	}
-	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-		(*f_itr)->homegenizeNormalPts();
 	}
 }
 
@@ -281,40 +257,31 @@ void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double 
 	depth = abs(z1 - z2);
 }
 
-// TODO delete screenMat from params
 void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill) {
 	std::vector<Edge*> edgeList = wem.getEdgeList();
-	std::vector<Face*> faceList = wem.getFaceList();
 	COLORREF c = wem.getColor();
 
 	if (bFill) {
+		auto faceList = wem.getFaceList();
 		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
 			(*f_itr)->fill(pDC, c);
 		}
 	}
-	else {
-		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-			if (!(*f_itr)->isBackFacing()) {
-				auto edges = (*f_itr)->getEdges();
-				for (auto e_itr = edges.begin(); e_itr != edges.end(); ++e_itr) {
-					draw(pDC, *(*e_itr)->getV1(), *(*e_itr)->getV2(), c);
-				}
-			}
+	//else {
+		for (auto e_itr = edgeList.begin(); e_itr != edgeList.end(); ++e_itr) {
+			// We do not change the original vertices. Instead, we accumulate all of the changes in the matrices and then
+			// apply the transformation to a copy of the original vertices.
+			Vertex v1 = *(*e_itr)->getV1();
+			Vertex v2 = *(*e_itr)->getV2();
+			/*v1.transform(transMat);
+			v2.transform(transMat);
+			v1.homegenize();
+			v2.homegenize();
+			v1.transform(screenMat);
+			v2.transform(screenMat);*/
+			draw(pDC, v1, v2, RGB(0,0,255)); //TODO return true color
 		}
-		//for (auto e_itr = edgeList.begin(); e_itr != edgeList.end(); ++e_itr) {
-		//	// We do not change the original vertices. Instead, we accumulate all of the changes in the matrices and then
-		//	// apply the transformation to a copy of the original vertices.
-		//	Vertex v1 = *(*e_itr)->getV1();
-		//	Vertex v2 = *(*e_itr)->getV2();
-		//	/*v1.transform(transMat);
-		//	v2.transform(transMat);
-		//	v1.homegenize();
-		//	v2.homegenize();
-		//	v1.transform(screenMat);
-		//	v2.transform(screenMat);*/
-		//	draw(pDC, v1, v2, RGB(0,0,255)); //TODO return true color
-		//}
-	}
+	//}
 }
 
 void drawBoundingBox(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & transMat, const Matrix4d & screenMat) {
@@ -379,17 +346,7 @@ void log_debug_edge_list(const WingedEdgeMesh & wem) {
 	}
 }
 
-void log_debug_face_list(const WingedEdgeMesh & wem) {
-	log_debug("\n============================== Face list =============================\n");
-	for (std::vector<Face*>::iterator f = wem.getFaceList().begin(); f != wem.getFaceList().end(); ++f) {
-		log_debug("f_%d, %p, ", f - wem.getFaceList().begin(), *f);
-		//log_debug_face(**f);
-		//std::vector<Vertex*> VL = (*f)->getVertices();
-	}
-}
-
 void log_debug_wem(const WingedEdgeMesh & wem) {
 	log_debug_vertex_list(wem);
 	log_debug_edge_list(wem);
-	log_debug_face_list(wem);
 }

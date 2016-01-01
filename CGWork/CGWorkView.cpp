@@ -395,7 +395,6 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {	
-	// TODO
 	SetupViewingFrustum();
 	SetupViewingOrthoConstAspect();
 
@@ -467,7 +466,6 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		}
 
 		WingedEdgeMesh tmp_wem(*obj);
-		tmp_wem.backFaceCulling(m_cameraP, m_cameraLook, m_modelMat * obj->m_modelMat);
 		log_debug("---------------WEM----------------\n");
 		log_debug_wem(*obj);
 		tmp_wem.transform(transMat);
@@ -479,15 +477,12 @@ void CCGWorkView::OnDraw(CDC* pDC)
 
 		drawAxis(pDrawDC, transMat, m_screenMat);
 
-		log_debug("drawing face normals...\n");
 		if (m_showPolyNormals) {
 			std::vector<Face*> faceList = tmp_wem.getFaceList();
 			for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
 				//drawNormal(pDrawDC, **f, transMat*obj->m_modelMat*scale(m_sFactor), m_screenMat, obj->getNormalColor());
-				//drawNormal(pDrawDC, **f, m_screenMat, obj->getNormalColor());
-				(*f)->drawNormal(pDrawDC, m_screenMat, obj->getNormalColor());
+				drawNormal(pDrawDC, **f, m_screenMat, obj->getNormalColor());
 			}
-			log_debug("done drawing face normals.\n");
 		}
 
 		if (m_showBoundingBox) {

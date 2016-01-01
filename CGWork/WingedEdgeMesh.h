@@ -38,7 +38,6 @@ public:
 
 	void transform(const Matrix4d & transMat);
 	void homegenize();
-	void backFaceCulling(const Vector4d & cameraP, const Vector4d & look, const Matrix4d & modelMat);
 
 	Matrix4d m_modelMat;
 
