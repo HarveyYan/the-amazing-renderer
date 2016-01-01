@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CGWork", "CGWork.vcxproj", "{C87C313E-8194-45E7-8BB6-936D93F21F13}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "..\Tests\Tests.vcxproj", "{A3F8B1C8-7932-45FD-8AF7-8F29DEFFFFA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C87C313E-8194-45E7-8BB6-936D93F21F13}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C87C313E-8194-45E7-8BB6-936D93F21F13}.Debug|Win32.Build.0 = Debug|Win32
+		{C87C313E-8194-45E7-8BB6-936D93F21F13}.Release|Win32.ActiveCfg = Release|Win32
+		{C87C313E-8194-45E7-8BB6-936D93F21F13}.Release|Win32.Build.0 = Release|Win32
+		{A3F8B1C8-7932-45FD-8AF7-8F29DEFFFFA6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3F8B1C8-7932-45FD-8AF7-8F29DEFFFFA6}.Debug|Win32.Build.0 = Debug|Win32
+		{A3F8B1C8-7932-45FD-8AF7-8F29DEFFFFA6}.Release|Win32.ActiveCfg = Release|Win32
+		{A3F8B1C8-7932-45FD-8AF7-8F29DEFFFFA6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
