@@ -10,7 +10,9 @@ bool Vector4d::operator==(Vector4d &rhs) {
 	if (this == &rhs) {
 		return true;
 	}
-	return almost_eq(getX(), rhs.getX()) && almost_eq(getY(), rhs.getY()) && almost_eq(getZ(), rhs.getZ());
+	return almost_eq(getX(), rhs.getX()) && 
+		almost_eq(getY(), rhs.getY()) && 
+		almost_eq(getZ(), rhs.getZ());
 }
 
 double Vector4d::operator*(const Vector4d & rhs) const {

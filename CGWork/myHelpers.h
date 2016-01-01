@@ -3,7 +3,7 @@
 #include "StdAfx.h"
 #include <conio.h>
 
-//#define MY_DEBUG // Uncomment to print debug messages.
+#define MY_DEBUG // Uncomment to print debug messages.
 
 #ifdef MY_DEBUG
 	#define log_debug(M, ...) _cprintf("[DEBUG] %s:%d " M, __FILE__, __LINE__, ##__VA_ARGS__)

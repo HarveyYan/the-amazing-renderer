@@ -16,6 +16,8 @@ Face::~Face()
 }
 
 void Face::addVertex(Vertex * v) {
+	static int i = 0;
+	log_debug("i = %d\n", i++);
 	if (v) {
 		vertices.push_back(v);
 	}
@@ -47,14 +49,61 @@ void Face::calcPlane() {
 	setNormal(norm.getX(), norm.getY(), norm.getZ(), D);
 }
 
+void Face::setNormal(const Vector4d & n) {
+	normal = n;
+	//setNormal(n	.getX(), n.getY(), n.getZ(), D);
+}
+
 void Face::setNormal(double A, double B, double C, double _D) {
 	normal = Vector4d(A, B, C);
 	normal = normalize(normal);
 	D = _D;
+
+	normal_pt1 = Vector4d(0, 0, 0);
+	for (std::vector<Vertex*>::const_iterator v = vertices.begin(); v != vertices.end(); ++v) {
+		normal_pt1 = normal_pt1 + (*v)->getCoord();
+	}
+	normal_pt1 = normal_pt1 / vertices.size();
+
+	normal_pt2 = normal_pt1 + normal;
+
+	log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
+}
+
+void Face::drawNormal(CDC *pDC, const Matrix4d & screenMat, COLORREF c) {
+	// TODO del
+	/*log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
+	Vector4d p1 = screenMat * normal_pt1;
+	Vector4d p2 = screenMat * normal_pt2;
+	log_debug("drawing normal: ");
+	log_debug_vertex(p1);
+	log_debug(" ---> ");
+	log_debug_vertex(p2);*/
+	draw(pDC, normal_pt1, normal_pt2, c);
+}
+
+void Face::homegenizeNormalPts() {
+	log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
+	normal_pt1.homegenize();
+	normal_pt2.homegenize();
+	log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
 }
 
 void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF c) {
-	Vector4d P;
+	// TODO delete function
+	/*Vector4d P;
 	std::vector<Vertex*> vertices = f.getVertices();
 	for (std::vector<Vertex*>::const_iterator v = vertices.begin(); v != vertices.end(); ++v) {
 		P = P + (*v)->getCoord();
@@ -66,9 +115,23 @@ void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF 
 	P.homegenize();
 	norm.homegenize();
 	P = screenMat * P;
-	norm = screenMat * norm;
+	norm = screenMat * norm;*/
 
-	draw(pDC, P, norm, c);
+	//draw(pDC, screenMat * normal_pt1, screenMat * normal_pt2, c);
+}
+
+void Face::transformNormal(const Matrix4d & transMat) {
+	log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
+	normal = transMat * normal; // TODO needed?
+	normal_pt1 = transMat * normal_pt1;
+	normal_pt2 = transMat * normal_pt2;
+	log_debug("normal: ");
+	log_debug_vertex(normal_pt1);
+	log_debug(" ---> ");
+	log_debug_vertex(normal_pt2);
 }
 
 double closestZ(const Face & f) {
@@ -144,10 +207,19 @@ void Face::fill(CDC *pDC, COLORREF c) {
 	auto v1 = vertices.begin();
 	auto v2 = vertices.begin() + 1;
 	auto v3 = vertices.begin() + 2;
+	log_debug("SIZE = %d\n", vertices.size());
 	for (; v3 != vertices.end(); ++v2, ++v3) {
 		std::vector<Vertex*> vertices;
 		vertices.push_back(*v1); vertices.push_back(*v2); vertices.push_back(*v3);
 		std::sort(vertices.begin(), vertices.end(), VertexYGreater());
 		fillTriangle(pDC, *vertices[0], *vertices[1], *vertices[2], c);
 	}
+}
+
+void log_debug_face(const Face & f) {
+	log_debug_less("[%d : ", f.getVertices().size());
+	for (auto v = f.getVertices().begin(); v != f.getVertices().end(); ++v) {
+		log_debug_vertex(**v);
+	}
+	log_debug_less(" ]\n");
 }

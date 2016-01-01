@@ -1,7 +1,8 @@
 #pragma once
 #include "StdAfx.h"
 
-/* Homegenous vector structure. The four dimensional vector (x,y,z,h) represents the three dimensional vector (x/h,y/h,z/h).*/
+/* Homegenous vector structure. 
+The four dimensional vector (x,y,z,h) represents the three dimensional vector (x/h,y/h,z/h). */
 class Vector4d
 {
 public:
