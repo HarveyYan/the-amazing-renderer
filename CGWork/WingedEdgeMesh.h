@@ -38,6 +38,7 @@ public:
 
 	void transform(const Matrix4d & transMat);
 	void homegenize();
+	void backFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective);
 
 	Matrix4d m_modelMat;
 
@@ -54,7 +55,7 @@ double diameter(const WingedEdgeMesh & wem);
 double diameter(const std::vector<WingedEdgeMesh> & objects);
 double diameterUpperBound(const std::vector<WingedEdgeMesh> & objects);
 void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double & height, double & depth);
-void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill);
+void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill, bool bBackFaceCulling);
 void drawBoundingBox(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & transMat, const Matrix4d & screenMat);
 void drawVertexNormals(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & screenMat);
 

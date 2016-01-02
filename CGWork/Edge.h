@@ -13,7 +13,7 @@ class CDC;
 class Edge
 {
 public:
-	Edge(Vertex * _v1, Vertex * _v2) : v1(_v1), v2(_v2) {};
+	Edge(Vertex * _v1, Vertex * _v2) : v1(_v1), v2(_v2), f1(0), f2(0) {};
 	Edge(Vertex * _v1, Vertex * _v2, Face * _f1, Face * _f2) : v1(_v1), v2(_v2), f1(_f1), f2(_f2) {};
 	~Edge();
 

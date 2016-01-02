@@ -103,6 +103,12 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_ALLOBJECTS, &CCGWorkView::OnUpdateActionAllobjects)
 	ON_COMMAND(ID_OPTIONS_HIGHLIGHTFACE, &CCGWorkView::OnOptionsHighlightface)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_HIGHLIGHTFACE, &CCGWorkView::OnUpdateOptionsHighlightface)
+	ON_COMMAND(ID_RENDERING_WIREFRAME, &CCGWorkView::OnRenderingWireframe)
+	ON_UPDATE_COMMAND_UI(ID_RENDERING_WIREFRAME, &CCGWorkView::OnUpdateRenderingWireframe)
+	ON_COMMAND(ID_RENDERING_RENDER, &CCGWorkView::OnRenderingRender)
+	ON_UPDATE_COMMAND_UI(ID_RENDERING_RENDER, &CCGWorkView::OnUpdateRenderingRender)
+	ON_COMMAND(ID_RENDERING_BACKFACECULLING, &CCGWorkView::OnRenderingBackfaceculling)
+	ON_UPDATE_COMMAND_UI(ID_RENDERING_BACKFACECULLING, &CCGWorkView::OnUpdateRenderingBackfaceculling)
 END_MESSAGE_MAP()
 
 
@@ -212,6 +218,10 @@ CCGWorkView::CCGWorkView()
 
 	m_pHighlightedFace = NULL;
 	m_highlighFace = false;
+
+	m_bRender = false;
+	m_bWireframe = true;
+	m_bBackfaceCulling = false;
 }
 
 CCGWorkView::~CCGWorkView()
@@ -466,22 +476,28 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		}
 
 		WingedEdgeMesh tmp_wem(*obj);
-		log_debug("---------------WEM----------------\n");
-		log_debug_wem(*obj);
+
+		if (m_bBackfaceCulling) {
+			tmp_wem.backFaceCulling(m_cameraP, m_modelMat * obj->m_modelMat, m_bIsPerspective);
+		}
+	
 		tmp_wem.transform(transMat);
-		log_debug("---------------TMP WEM----------------\n");
 		tmp_wem.homegenize();
 		tmp_wem.transform(m_screenMat);
-		log_debug_wem(tmp_wem);
-		drawMesh(pDrawDC, tmp_wem, m_screenMat, true);
+
+		if (m_bWireframe) {
+			drawMesh(pDrawDC, tmp_wem, m_screenMat, false, m_bBackfaceCulling);
+		}
+		if (m_bRender) {
+			drawMesh(pDrawDC, tmp_wem, m_screenMat, true, m_bBackfaceCulling);
+		}
 
 		drawAxis(pDrawDC, transMat, m_screenMat);
 
 		if (m_showPolyNormals) {
 			std::vector<Face*> faceList = tmp_wem.getFaceList();
 			for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-				//drawNormal(pDrawDC, **f, transMat*obj->m_modelMat*scale(m_sFactor), m_screenMat, obj->getNormalColor());
-				drawNormal(pDrawDC, **f, m_screenMat, obj->getNormalColor());
+				(*f)->drawNormal(pDrawDC, m_screenMat, obj->getNormalColor());
 			}
 		}
 
@@ -1080,6 +1096,43 @@ void CCGWorkView::OnUpdateOptionsHighlightface(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_highlighFace);
 }
 
+void CCGWorkView::OnRenderingWireframe()
+{
+	m_bWireframe = m_bWireframe;
+	Invalidate();
+}
+
+
+void CCGWorkView::OnUpdateRenderingWireframe(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bWireframe);
+}
+
+
+void CCGWorkView::OnRenderingRender()
+{
+	m_bRender = !m_bRender;
+	Invalidate();
+}
+
+
+void CCGWorkView::OnUpdateRenderingRender(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bRender);
+}
+
+void CCGWorkView::OnRenderingBackfaceculling()
+{
+	m_bBackfaceCulling = !m_bBackfaceCulling;
+	Invalidate();
+}
+
+
+void CCGWorkView::OnUpdateRenderingBackfaceculling(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bBackfaceCulling);
+}
+
 
 /********************/
 /* Drawing methods. */
@@ -1128,3 +1181,4 @@ void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat) {
 	draw(pDC, P, ay, screenMat, RGB(0, 255, 0));
 	draw(pDC, P, az, screenMat, RGB(0, 0, 255));
 }
+

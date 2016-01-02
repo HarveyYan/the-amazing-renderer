@@ -28,7 +28,8 @@ void OrthoCamera::set(double l, double r, double t, double b, double n, double f
 	//	0, 0, 0, 1
 	//	); // TODO
 	cameraMat = translate(-(l + r) / 2, -(b + t) / 2, (n + f) / 2);
-	normCubeMat = scale(2 / (l - r), 2 / (t - b), 2 / (n - f));
+	//normCubeMat = scale(2 / (l - r), 2 / (t - b), 2 / (n - f)); // TODO remove minus from first?
+	normCubeMat = scale(-2 / (l - r), 2 / (t - b), -2 / (n - f)); // TODO
 	mat = normCubeMat * cameraMat;
 	matInv =
 		translateInv(- (l + r) / 2, -(b + t) / 2, (n + f) / 2) *
