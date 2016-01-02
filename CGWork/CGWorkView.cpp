@@ -481,7 +481,8 @@ void CCGWorkView::OnDraw(CDC* pDC)
 			std::vector<Face*> faceList = tmp_wem.getFaceList();
 			for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
 				//drawNormal(pDrawDC, **f, transMat*obj->m_modelMat*scale(m_sFactor), m_screenMat, obj->getNormalColor());
-				drawNormal(pDrawDC, **f, m_screenMat, obj->getNormalColor());
+				//drawNormal(pDrawDC, **f, m_screenMat, obj->getNormalColor());
+				(*f)->drawNormal(pDrawDC, m_screenMat, obj->getNormalColor());
 			}
 		}
 

@@ -214,9 +214,10 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	
 		Vertex *PFirstVertex = PMyPrevVertex;
 		Vertex *PMyVertex;
-		Edge *PMyEdge;
-		Face *PMyFace = new Face();
 
+		Edge *PMyEdge;
+
+		Face *PMyFace = new Face();
 		myMesh.addFace(PMyFace);
 		PMyFace->addVertex(PMyPrevVertex);
 		PMyPrevVertex->addFace(PMyFace);
@@ -309,6 +310,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		}
 	}
 
+	log_debug_wem(myMesh);
 	OBJECTS.push_back(myMesh);
 	
 	/* Close the object. */
