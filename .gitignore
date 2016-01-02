@@ -279,3 +279,14 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+<<<<<<< HEAD
+bin/
+include/
+iritLib/
+pngLib/
+=======
+/include
+/iritLib
+/pngLib
+>>>>>>> log-debug-face-crash-bugfix
