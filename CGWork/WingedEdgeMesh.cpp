@@ -372,7 +372,7 @@ void log_debug_vertex_list(const WingedEdgeMesh & wem) {
 void log_debug_edge_list(const WingedEdgeMesh & wem) {
 	log_debug("\n============================== Edge list =============================\n");
 	for (auto e = wem.getEdgeList().begin(); e != wem.getEdgeList().end(); ++e) {
-		log_debug("e_%d, ([%f, %f, %f], [%f, %f, %f])\n",
+		log_debug_less("e_%d, ([%f, %f, %f], [%f, %f, %f])\n",
 			e - wem.getEdgeList().begin(),
 			(*e)->getV1()->getX(), (*e)->getV1()->getY(), (*e)->getV1()->getZ(),
 			(*e)->getV2()->getX(), (*e)->getV2()->getY(), (*e)->getV2()->getZ());
@@ -381,10 +381,10 @@ void log_debug_edge_list(const WingedEdgeMesh & wem) {
 
 void log_debug_face_list(const WingedEdgeMesh & wem) {
 	log_debug("\n============================== Face list =============================\n");
-	for (std::vector<Face*>::iterator f = wem.getFaceList().begin(); f != wem.getFaceList().end(); ++f) {
-		log_debug("f_%d, %p, ", f - wem.getFaceList().begin(), *f);
-		//log_debug_face(**f);
-		//std::vector<Vertex*> VL = (*f)->getVertices();
+	std::vector<Face*> FL = wem.getFaceList();
+	for (int i = 0; i < FL.size(); ++i) {
+		log_debug_less("f_%d, %p : ", i, FL.at(i));
+		log_debug_face(*FL.at(i));
 	}
 }
 

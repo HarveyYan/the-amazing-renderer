@@ -16,8 +16,6 @@ Face::~Face()
 }
 
 void Face::addVertex(Vertex * v) {
-	static int i = 0;
-	log_debug("i = %d\n", i++);
 	if (v) {
 		vertices.push_back(v);
 	}
@@ -67,9 +65,7 @@ void Face::setNormal(double A, double B, double C, double _D) {
 
 	normal_pt2 = normal_pt1 + normal;
 
-	log_debug("normal: ");
 	log_debug_vertex(normal_pt1);
-	log_debug(" ---> ");
 	log_debug_vertex(normal_pt2);
 }
 
@@ -89,16 +85,8 @@ void Face::drawNormal(CDC *pDC, const Matrix4d & screenMat, COLORREF c) {
 }
 
 void Face::homegenizeNormalPts() {
-	log_debug("normal: ");
-	log_debug_vertex(normal_pt1);
-	log_debug(" ---> ");
-	log_debug_vertex(normal_pt2);
 	normal_pt1.homegenize();
 	normal_pt2.homegenize();
-	log_debug("normal: ");
-	log_debug_vertex(normal_pt1);
-	log_debug(" ---> ");
-	log_debug_vertex(normal_pt2);
 }
 
 void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF c) {
@@ -121,17 +109,9 @@ void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF 
 }
 
 void Face::transformNormal(const Matrix4d & transMat) {
-	log_debug("normal: ");
-	log_debug_vertex(normal_pt1);
-	log_debug(" ---> ");
-	log_debug_vertex(normal_pt2);
 	normal = transMat * normal; // TODO needed?
 	normal_pt1 = transMat * normal_pt1;
 	normal_pt2 = transMat * normal_pt2;
-	log_debug("normal: ");
-	log_debug_vertex(normal_pt1);
-	log_debug(" ---> ");
-	log_debug_vertex(normal_pt2);
 }
 
 double closestZ(const Face & f) {
@@ -155,16 +135,8 @@ double closestZ(const Face & f) {
 //}
 
 void Face::fillTriangle(CDC *pDC, const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c) {
-	log_debug("----12----\n");
 	PointTracker PT_12(v1, v2);
-	log_debug("----13----\n");
 	PointTracker PT_13(v1, v3);
-
-	log_debug("Triangle: \n");
-	log_debug_vertex(v1);
-	log_debug_vertex(v2);
-	log_debug_vertex(v3);
-	log_debug("\n");
 
 	if (!PT_12.isValid()) {
 		draw(pDC, v1, v2, c);
@@ -182,7 +154,6 @@ void Face::fillTriangle(CDC *pDC, const Vertex & v1, const Vertex & v2, const Ve
 	 } 
 
 	// Lower triangle
-	log_debug("----23----\n");
 	PointTracker PT_23(v2, v3);
 	if (!PT_23.isValid()) {
 		draw(pDC, v2, v3, c);
@@ -207,7 +178,6 @@ void Face::fill(CDC *pDC, COLORREF c) {
 	auto v1 = vertices.begin();
 	auto v2 = vertices.begin() + 1;
 	auto v3 = vertices.begin() + 2;
-	log_debug("SIZE = %d\n", vertices.size());
 	for (; v3 != vertices.end(); ++v2, ++v3) {
 		std::vector<Vertex*> vertices;
 		vertices.push_back(*v1); vertices.push_back(*v2); vertices.push_back(*v3);
@@ -217,9 +187,10 @@ void Face::fill(CDC *pDC, COLORREF c) {
 }
 
 void log_debug_face(const Face & f) {
-	log_debug_less("[%d : ", f.getVertices().size());
-	for (auto v = f.getVertices().begin(); v != f.getVertices().end(); ++v) {
-		log_debug_vertex(**v);
+	std::vector<Vertex*> VL = f.getVertices();
+	log_debug_less("[%d : ", VL.size());
+	for (int i = 0; i < VL.size(); ++i) {
+		log_debug_vertex(*VL.at(i));
 	}
 	log_debug_less(" ]\n");
 }
