@@ -136,6 +136,9 @@ protected:
 	std::vector<WingedEdgeMesh>::iterator m_activeObjectItr;
 	Face *m_pHighlightedFace;
 
+	bool m_bRender, m_bWireframe;
+	bool m_bBackfaceCulling;
+
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CCGWorkView)
@@ -191,6 +194,12 @@ public:
 	afx_msg void OnUpdateActionAllobjects(CCmdUI *pCmdUI);
 	afx_msg void OnOptionsHighlightface();
 	afx_msg void OnUpdateOptionsHighlightface(CCmdUI *pCmdUI);
+	afx_msg void OnRenderingWireframe();
+	afx_msg void OnUpdateRenderingWireframe(CCmdUI *pCmdUI);
+	afx_msg void OnRenderingRender();
+	afx_msg void OnUpdateRenderingRender(CCmdUI *pCmdUI);
+	afx_msg void OnRenderingBackfaceculling();
+	afx_msg void OnUpdateRenderingBackfaceculling(CCmdUI *pCmdUI);
 };
 
 void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat);

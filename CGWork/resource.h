@@ -3,6 +3,7 @@
 // Used by CGWork.rc
 //
 #define IDD_ABOUTBOX                    100
+#define IDD_RENDERWIREFRAMEDLG          103
 #define IDR_MAINFRAME                   128
 #define IDR_CGWorkTYPE                  129
 #define IDD_LIGHTS_DLG                  134
@@ -80,14 +81,17 @@
 #define ID_OPTIONS_SHOWVERTEXNORMALS    32810
 #define ID_ACTION_ALLOBJECTS            32811
 #define ID_OPTIONS_HIGHLIGHTFACE        32812
+#define ID_RENDERING_WIREFRAME          32813
+#define ID_RENDERING_RENDER             32814
+#define ID_RENDERING_BACKFACECULLING    32815
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        143
-#define _APS_NEXT_COMMAND_VALUE         32813
+#define _APS_NEXT_COMMAND_VALUE         32816
 #define _APS_NEXT_CONTROL_VALUE         1049
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

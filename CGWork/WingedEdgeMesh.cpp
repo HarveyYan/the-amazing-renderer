@@ -151,21 +151,13 @@ void WingedEdgeMesh::transform(const Matrix4d & transMat) {
 	for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
 		(*f)->transformNormal(transMat);
 	}
-
-	/*for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-		Vector4d n = transMat * (*f)->getNormal();
-		Vector4d A = (*f)->getVertices().back()->getCoord(); 
-		(*f)->setNormal(n);
-		(*f)->setD(dot_product(n, A));
-	}*/
 }
 
-void WingedEdgeMesh::backFaceCulling(const Vector4d & cameraP, const Vector4d & look, const Matrix4d & modelMat) {
+void WingedEdgeMesh::backFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective) {
 	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-		Vector4d n = modelMat * (*f_itr)->getNormal();
-		Vector4d v = modelMat * (*f_itr)->getVertices().back()->getCoord() - cameraP;
-		//Vector4d v = Vector4d(0, 0, -1);
-		if (dot_product(n, v) > 0) {
+		Vector4d n = modelMat * (*f_itr)->normal_pt2 - modelMat * (*f_itr)->normal_pt1;
+		Vector4d v = modelMat * (*f_itr)->getVertices().at(0)->getCoord() - cameraP;
+		if ((bIsPerspective && dot_product(n, v) < 0) || (!bIsPerspective && n.getZ() < 0)) {
 			(*f_itr)->setBackFacing(true);
 		}
 		else {
@@ -282,38 +274,29 @@ void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double 
 }
 
 // TODO delete screenMat from params
-void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill) {
+void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill, bool bBackFaceCulling) {
 	std::vector<Edge*> edgeList = wem.getEdgeList();
 	std::vector<Face*> faceList = wem.getFaceList();
 	COLORREF c = wem.getColor();
 
 	if (bFill) {
 		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-			(*f_itr)->fill(pDC, c);
+			if (!bBackFaceCulling || !(*f_itr)->isBackFacing()) {
+				(*f_itr)->fill(pDC, c);
+			}
 		}
 	}
 	else {
-		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
-			if (!(*f_itr)->isBackFacing()) {
-				auto edges = (*f_itr)->getEdges();
-				for (auto e_itr = edges.begin(); e_itr != edges.end(); ++e_itr) {
-					draw(pDC, *(*e_itr)->getV1(), *(*e_itr)->getV2(), c);
-				}
+		for (auto e_itr = edgeList.begin(); e_itr != edgeList.end(); ++e_itr) {
+			Edge *ep = *e_itr;
+			// Check for backface culling.
+			if (!bBackFaceCulling || // Draw anyway.
+				(ep->getF1() && !ep->getF1()->isBackFacing()) || // Otherwise, draw only if one of the faces
+				(ep->getF2() && !ep->getF2()->isBackFacing()))   // is not backfacing.
+			{
+				draw(pDC, *(*e_itr)->getV1(), *(*e_itr)->getV2(), c);
 			}
 		}
-		//for (auto e_itr = edgeList.begin(); e_itr != edgeList.end(); ++e_itr) {
-		//	// We do not change the original vertices. Instead, we accumulate all of the changes in the matrices and then
-		//	// apply the transformation to a copy of the original vertices.
-		//	Vertex v1 = *(*e_itr)->getV1();
-		//	Vertex v2 = *(*e_itr)->getV2();
-		//	/*v1.transform(transMat);
-		//	v2.transform(transMat);
-		//	v1.homegenize();
-		//	v2.homegenize();
-		//	v1.transform(screenMat);
-		//	v2.transform(screenMat);*/
-		//	draw(pDC, v1, v2, RGB(0,0,255)); //TODO return true color
-		//}
 	}
 }
 
