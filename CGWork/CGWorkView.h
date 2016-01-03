@@ -139,6 +139,8 @@ protected:
 	bool m_bRender, m_bWireframe;
 	bool m_bBackfaceCulling;
 
+	bool m_bSilhHighligh;
+
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CCGWorkView)

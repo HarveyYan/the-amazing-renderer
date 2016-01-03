@@ -38,9 +38,13 @@ public:
 
 	void transform(const Matrix4d & transMat);
 	void homegenize();
-	void backFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective);
+	void calcBackFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective);
 
 	Matrix4d m_modelMat;
+
+	void setSilhColor(COLORREF c) { silhColor = c; }
+	COLORREF getSilhColor() const { return silhColor; }
+	void highLightSilh(CDC *pDC);
 
 private:
 	std::vector<Vertex*> vertexList;
@@ -48,6 +52,8 @@ private:
 	std::vector<Face*> faceList;
 	COLORREF color;
 	COLORREF normalColor = RGB(0, 0, 0);
+	COLORREF silhColor = RGB(255, 255, 0);
+	int silhLineThickness = 4;
 	Vector4d Qmin, Qmax;
 };
 

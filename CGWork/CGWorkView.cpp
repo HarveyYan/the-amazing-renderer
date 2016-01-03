@@ -222,6 +222,8 @@ CCGWorkView::CCGWorkView()
 	m_bRender = false;
 	m_bWireframe = true;
 	m_bBackfaceCulling = false;
+
+	m_bSilhHighligh = true;
 }
 
 CCGWorkView::~CCGWorkView()
@@ -408,6 +410,7 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	// TODO add button to clear all objects (reset)
 	// TODO handle face winding order (clockwise or anti-clockwise)
 	// TODO reverse normals option
+	// TODO add menu option to change silhoette highligh color
 
 	// TODO return the onsize
 	SetupViewingFrustum();
@@ -482,9 +485,7 @@ void CCGWorkView::OnDraw(CDC* pDC)
 
 		WingedEdgeMesh tmp_wem(obj);
 
-		if (m_bBackfaceCulling) {
-			tmp_wem.backFaceCulling(m_cameraP, m_modelMat * obj.m_modelMat, m_bIsPerspective);
-		}
+		tmp_wem.calcBackFaceCulling(m_cameraP, m_modelMat * obj.m_modelMat, m_bIsPerspective);
 	
 		tmp_wem.transform(transMat);
 		tmp_wem.homegenize();
@@ -513,6 +514,10 @@ void CCGWorkView::OnDraw(CDC* pDC)
 			for (Vertex * v : tmp_wem.getVertexList()) {
 				v->drawNormal(pDrawDC, obj.getNormalColor());
 			}
+		}
+
+		if (m_bSilhHighligh) {
+			tmp_wem.highLightSilh(pDrawDC);
 		}
 	}
 
@@ -1088,7 +1093,7 @@ void CCGWorkView::OnUpdateOptionsHighlightface(CCmdUI *pCmdUI)
 
 void CCGWorkView::OnRenderingWireframe()
 {
-	m_bWireframe = m_bWireframe;
+	m_bWireframe = !m_bWireframe;
 	Invalidate();
 }
 

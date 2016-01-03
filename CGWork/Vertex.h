@@ -72,10 +72,18 @@ Vertex* getVertexFromMap(VertexMap & vHM, const Vertex & v);
 void insertVertexToMap(VertexMap & vHM, Vertex * v);
 
 
-struct VertexYGreater {
+struct PVertexYGreater {
 	bool operator()(const Vertex *lhs, const Vertex *rhs) const {
 		if (lhs->getY() == rhs->getY()) // break ties to the left
 			return lhs->getX() < rhs->getX();
 		return lhs->getY() < rhs->getY();
+	}
+};
+
+struct VertexYGreater {
+	bool operator()(const Vertex &lhs, const Vertex &rhs) const {
+		if (lhs.getY() == rhs.getY()) // break ties to the left
+			return lhs.getX() < rhs.getX();
+		return lhs.getY() < rhs.getY();
 	}
 };

@@ -39,12 +39,14 @@ private:
 	std::vector<Vertex*> vertices;
 	std::vector<Edge*> edges;	
 
-	// assume that vertices are sorted by y in ascending order
-	void fillTriangle(CDC *pDC, const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c);
-
 	bool m_bBackFacing;
 };
 
 double closestZ(const Face & f);
 
 void log_debug_face(const Face & f);
+
+// assume that vertices are sorted by y in ascending order
+void fillTriangle(
+	CDC *pDC,
+	const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c);

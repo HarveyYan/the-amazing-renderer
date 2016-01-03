@@ -95,7 +95,10 @@ double closestZ(const Face & f) {
 	return cz;
 }
 
-void Face::fillTriangle(CDC *pDC, const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c) {
+void fillTriangle(
+	CDC *pDC, 
+	const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c) 
+{
 	PointTracker PT_12(v1, v2);
 	PointTracker PT_13(v1, v3);
 
@@ -142,7 +145,7 @@ void Face::fill(CDC *pDC, COLORREF c) {
 	for (; v3 != vertices.end(); ++v2, ++v3) {
 		std::vector<Vertex*> vertices;
 		vertices.push_back(*v1); vertices.push_back(*v2); vertices.push_back(*v3);
-		std::sort(vertices.begin(), vertices.end(), VertexYGreater());
+		std::sort(vertices.begin(), vertices.end(), PVertexYGreater());
 		fillTriangle(pDC, *vertices[0], *vertices[1], *vertices[2], c);
 	}
 }

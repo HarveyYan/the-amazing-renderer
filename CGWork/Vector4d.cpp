@@ -62,11 +62,16 @@ double distance(const Vector4d & v1, const Vector4d & v2) {
 }
 
 Vector4d normalize(const Vector4d & v) {
-	double l = (v.x*v.x + v.y*v.y + v.z*v.z) / v.h;
-	return Vector4d(v.x / l, v.y / l, v.z / l, v.h);
+	Vector4d res = v;
+	res.homegenize();
+	double l = sqrt(res.x*res.x + res.y*res.y + res.z*res.z);
+	return res / l;
 }
 
 void Vector4d::homegenize() {
+	if (almost_eq(h, 1)) {
+		return;
+	}
 	x = x / h;
 	y = y / h;
 	z = z / h;

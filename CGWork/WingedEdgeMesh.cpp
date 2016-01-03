@@ -1,9 +1,13 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <algorithm>
 #include "WingedEdgeMesh.h"
 #include "Vertex.h"
 #include "myHelpers.h"
 #include "Edge.h"
 #include "Matrix4d.h"
 #include "Face.h"
+#include "PointTracker.h"
 
 
 /*********************************/
@@ -154,7 +158,7 @@ void WingedEdgeMesh::transform(const Matrix4d & transMat) {
 	}
 }
 
-void WingedEdgeMesh::backFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective) {
+void WingedEdgeMesh::calcBackFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective) {
 	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
 		Vector4d n = modelMat * (*f_itr)->normal_pt2 - modelMat * (*f_itr)->normal_pt1;
 		Vector4d v = modelMat * (*f_itr)->getVertices().at(0)->getCoord() - cameraP;
@@ -233,40 +237,6 @@ void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double 
 			x2 = max(x2, vx);
 			y2 = min(y2, vy);
 			z2 = max(z2, vz);
-
-			//if (first) {
-			//	x1 = x2 = vx;
-			//	y1 = y2 = vy;
-			//	first = false;
-			//}
-			//else if (vx < x1 && vy > y1) { // 1
-			//	x1 = vx;
-			//	y1 = vy;
-			//}
-			//else if (vx > x1 && vx < x2 && vy > y1) { // 2
-			//	y1 = vy;
-			//}
-			//else if (vx > x2 && vy > y1) { // 3
-			//	y1 = vy;
-			//	x2 = vx;
-			//}
-			//else if (vx > x2 && vy < y1 && vy > y2) { // 4
-			//	x2 = vx;
-			//}
-			//else if (vx > x2 && vy < y2) { // 5
-			//	x2 = vx;
-			//	y2 = vy;
-			//}
-			//else if (vx > x1 && vx < x2 && vy < y2) { // 6
-			//	y2 = vy;
-			//}
-			//else if (vx < x1 && vy < y2) { // 7
-			//	x1 = vx;
-			//	y2 = vy;
-			//}
-			//else if (vx < x1 && vy < y1 && vy > y2) {
-			//	x1 = vx;
-			//}
 		}
 	}
 	width = abs(x1 - x2);
@@ -274,11 +244,38 @@ void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double 
 	depth = abs(z1 - z2);
 }
 
+void WingedEdgeMesh::highLightSilh(CDC *pDC) {
+	for (Edge * ep : edgeList) {
+		Face *fp1 = ep->getF1();
+		Face *fp2 = ep->getF2();
+
+		bool isSilhEdge = (fp1 && fp2) && (fp1->isBackFacing() ^ fp2->isBackFacing());
+		/*bool isOneManifoldEdge = fp1 && !fp2 || !fp1 && fp2;
+		bool hasFacingFace = (fp1 && !fp1->isBackFacing()) || (fp2 && !fp2->isBackFacing());
+		if (isSilhEdge || (isOneManifoldEdge && hasFacingFace))*/
+		if (isSilhEdge)
+		{
+			Vector4d p1 = ep->getV1()->getCoord();
+			Vector4d p2 = ep->getV2()->getCoord();
+			Vector4d r = rotate(0, 0, M_PI / 2) * normalize(p2 - p1);
+
+			std::vector<Vertex> vertices { 
+				Vertex(p1 - silhLineThickness*r),
+				Vertex(p1 + silhLineThickness*r),
+				Vertex(p2 - silhLineThickness*r),
+				Vertex(p2 + silhLineThickness*r)};
+			std::sort(vertices.begin(), vertices.end(), VertexYGreater());
+			fillTriangle(pDC, vertices[0], vertices[1], vertices[2], silhColor);
+			fillTriangle(pDC, vertices[1], vertices[2], vertices[3], silhColor);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+		}
+	}
+}
+
 void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling) {
 	std::vector<Edge*> edgeList = wem.getEdgeList();
 	std::vector<Face*> faceList = wem.getFaceList();
 	COLORREF c = wem.getColor();
-
+		
 	if (bFill) {
 		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
 			if (!bBackFaceCulling || !(*f_itr)->isBackFacing()) {
@@ -289,10 +286,11 @@ void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCu
 	else {
 		for (auto e_itr = edgeList.begin(); e_itr != edgeList.end(); ++e_itr) {
 			Edge *ep = *e_itr;
+			Face *fp1 = ep->getF1();
+			Face *fp2 = ep->getF2();
 			// Check for backface culling.
-			if (!bBackFaceCulling || // Draw anyway.
-				(ep->getF1() && !ep->getF1()->isBackFacing()) || // Otherwise, draw only if one of the faces
-				(ep->getF2() && !ep->getF2()->isBackFacing()))   // is not backfacing.
+			bool hasFacingFace = (fp1 && !fp1->isBackFacing()) || (fp2 && !fp2->isBackFacing());
+			if (!bBackFaceCulling || hasFacingFace)
 			{
 				draw(pDC, *(*e_itr)->getV1(), *(*e_itr)->getV2(), c);
 			}
