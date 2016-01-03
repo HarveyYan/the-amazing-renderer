@@ -49,12 +49,10 @@ void Face::calcPlane() {
 
 void Face::setNormal(const Vector4d & n) {
 	normal = n;
-	//setNormal(n	.getX(), n.getY(), n.getZ(), D);
 }
 
 void Face::setNormal(double A, double B, double C, double _D) {
-	normal = Vector4d(A, B, C);
-	normal = normalize(normal);
+	normal = normalize(Vector4d(A,B,C));
 	D = _D;
 
 	normal_pt1 = Vector4d(0, 0, 0);
@@ -62,9 +60,21 @@ void Face::setNormal(double A, double B, double C, double _D) {
 		normal_pt1 = normal_pt1 + (*v)->getCoord();
 	}
 	normal_pt1 = normal_pt1 / vertices.size();
+	normal_pt2 = normal_pt1 - normal;
 
+	log_debug("face normal pts: ");
+	log_debug_vertex(normal_pt1);
+	log_debug_vertex(normal_pt2);
+}
+
+void Face::calcNormalEndPts() {
+	normal_pt1 = Vector4d(0, 0, 0);
+	for (std::vector<Vertex*>::const_iterator v = vertices.begin(); v != vertices.end(); ++v) {
+		normal_pt1 = normal_pt1 + (*v)->getCoord();
+	}
+	normal_pt1 = normal_pt1 / vertices.size();
 	normal_pt2 = normal_pt1 + normal;
-
+	log_debug("face normal pts: ");
 	log_debug_vertex(normal_pt1);
 	log_debug_vertex(normal_pt2);
 }
@@ -81,7 +91,8 @@ void Face::homegenizeNormalPts() {
 void Face::transformNormal(const Matrix4d & transMat) {
 	normal_pt1 = transMat * normal_pt1;
 	normal_pt2 = transMat * normal_pt2;
-	normal = normalize(normal_pt2 - normal_pt1);
+	//normal = normalize(normal_pt2 - normal_pt1);
+	normal = transMat * normal;
 }
 
 double closestZ(const Face & f) {
@@ -152,8 +163,12 @@ void Face::fill(CDC *pDC, COLORREF c) {
 
 void log_debug_face(const Face & f) {
 	std::vector<Vertex*> VL = f.getVertices();
-	log_debug_less("[%d : ", VL.size());
+	log_debug_less("[%d : \n", VL.size());
+	log_debug_less("\tN "); log_debug_vertex(f.getNormal());
+	log_debug_less("\tnormal_pt1 "); log_debug_vertex(f.normal_pt1);
+	log_debug_less("\tnormal_pt2 "); log_debug_vertex(f.normal_pt2);
 	for (int i = 0; i < VL.size(); ++i) {
+		log_debug_less("\t");
 		log_debug_vertex(*VL.at(i));
 	}
 	log_debug_less(" ]\n");

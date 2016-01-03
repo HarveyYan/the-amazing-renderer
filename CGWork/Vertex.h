@@ -42,6 +42,7 @@ public:
 	void setNormal(const Vector4d & n);
 	void setNormal(double x, double y, double z);
 	void approximateNormal();
+	void calcNormalEndPts();
 	Vector4d getNormal() const { return normal; }
 	bool hasNormal() const { return m_hasNormal; }
 	void drawNormal(CDC *pDC, COLORREF c);
@@ -55,6 +56,7 @@ private:
 	std::vector<Edge*> incidentEdges;
 	std::vector<Face*> incidentFaces;
 	Vector4d normal;
+	Vector4d normal_pt2;
 	bool m_hasNormal;
 };
 

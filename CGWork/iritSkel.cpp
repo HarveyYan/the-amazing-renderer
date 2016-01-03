@@ -239,6 +239,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				// Set vertex normal. Later on we approximate the normal if it was not given in the file.
 				if (IP_HAS_NORMAL_VRTX(PVertex)) { // TODO I don't think this recognizes that there is no vertex normal defined.
 					PMyVertex->setNormal(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2]);
+					log_debug("PVertex normal : %f %f %f\n", PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2]);
 				}
 			}
 
@@ -310,7 +311,6 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		}
 	}
 
-	log_debug_wem(myMesh);
 	OBJECTS.push_back(myMesh);
 	
 	/* Close the object. */

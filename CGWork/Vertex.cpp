@@ -26,6 +26,7 @@ void Vertex::transform(const Matrix4d & mat) {
 
 void Vertex::transformNormal(const Matrix4d & mat) {
 	normal = mat * normal;
+	normal_pt2 = mat * normal_pt2;
 }
 
 void Vertex::addEdge(Edge *pe) {
@@ -37,12 +38,14 @@ void Vertex::addFace(Face *f) {
 }
 
 void Vertex::setNormal(const Vector4d & n) {
-	normal = n;
+	normal = normalize(n);
+	calcNormalEndPts();
 	m_hasNormal = true;
 }
 
 void Vertex::setNormal(double x, double y, double z) {
 	normal = normalize(Vector4d(x, y, z));
+	calcNormalEndPts();
 	m_hasNormal = true;
 }
 
@@ -58,6 +61,11 @@ void Vertex::approximateNormal() {
 		normal = -normal;
 	}
 	normal = normalize(normal);
+	calcNormalEndPts();
+}
+
+void Vertex::calcNormalEndPts() {
+	normal_pt2 = coord + normal;
 }
 
 void draw(CDC * pDC, Vertex v1, Vertex v2, COLORREF c) {
@@ -77,7 +85,7 @@ void drawNormal(CDC * pDC, const Vertex & v, const Matrix4d & screenMat, COLORRE
 }
 
 void Vertex::drawNormal(CDC *pDC, COLORREF c) {
-	draw(pDC, coord, normal, c);
+	draw(pDC, coord, normal_pt2, c);
 }
 
 double distance(const Vertex & v1, const Vertex & v2) {

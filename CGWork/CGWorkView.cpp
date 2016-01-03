@@ -152,7 +152,7 @@ static const double CAMERA_FOVY = 60;
 //static const double PCAMERA_NEAR = 1;
 //static const double PCAMERA_FAR = 2;
 
-static const double START_SCALE = 0.5;
+static const double START_SCALE = 0.75;
 
 /////////////////////////////////////////////////////////////////////////////
 // CCGWorkView construction/destruction
@@ -491,6 +491,10 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		tmp_wem.homegenize();
 		tmp_wem.transform(m_screenMat);
 
+		/*log_debug("tmp_wem device space: \n");
+		log_debug_wem(tmp_wem);
+		log_debug("\n\n\n");*/
+
 		if (m_bWireframe) {
 			drawMesh(pDrawDC, tmp_wem, false, m_bBackfaceCulling);
 		}
@@ -585,11 +589,21 @@ void CCGWorkView::OnFileLoad()
 		log_info("persp = %f %f %f\n", m_perspCamera.getWidth(), m_perspCamera.getHeight(), m_perspCamera.getDepth());
 		log_info("ortho = %f %f %f\n", m_orthoCamera.getWidth(), m_orthoCamera.getHeight(), m_orthoCamera.getDepth());
 		log_info("m_cameraWidth = %f\n", m_cameraWidth);
-		m_sFactor = START_SCALE * 
-			min(m_orthoCamera.getWidth(), m_orthoCamera.getHeight()) / 
-			max(max(BBWidth, BBHeight), BBDepth);
+
+		m_sFactor = START_SCALE *
+			min(m_orthoCamera.getWidth(), m_orthoCamera.getHeight()) /
+			std::sqrt(BBWidth*BBWidth + BBHeight*BBHeight + BBDepth*BBDepth);
+
 		for (unsigned int i = lastAdded; i < OBJECTS.size(); ++i) {
-			OBJECTS[i].transform(scale(m_sFactor, m_sFactor, m_sFactor));
+			//OBJECTS[i].transform(scale(m_sFactor, m_sFactor, m_sFactor));
+			for (Vertex * pv : OBJECTS[i].getVertexList()) {
+				pv->transform(scale(m_sFactor, m_sFactor, m_sFactor));
+				pv->calcNormalEndPts();
+			}
+			for (Face * fp : OBJECTS[i].getFaceList()) {
+				fp->calcNormalEndPts();
+			}
+			
 			calculateBoundingBox(OBJECTS[i]);
 		}
 

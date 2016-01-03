@@ -160,7 +160,9 @@ void WingedEdgeMesh::transform(const Matrix4d & transMat) {
 
 void WingedEdgeMesh::calcBackFaceCulling(const Vector4d & cameraP, const Matrix4d & modelMat, bool bIsPerspective) {
 	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
+		// Normal vector (in world space).
 		Vector4d n = modelMat * (*f_itr)->normal_pt2 - modelMat * (*f_itr)->normal_pt1;
+		// Vector from the camera to one of the face vertices (in world space).
 		Vector4d v = modelMat * (*f_itr)->getVertices().at(0)->getCoord() - cameraP;
 		if ((bIsPerspective && dot_product(n, v) < 0) || (!bIsPerspective && n.getZ() < 0)) {
 			(*f_itr)->setBackFacing(true);
