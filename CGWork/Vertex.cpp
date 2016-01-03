@@ -22,9 +22,10 @@ void Vertex::set(const Vector4d & c) {
 
 void Vertex::transform(const Matrix4d & mat) {
 	coord = mat * coord;
-	if (m_hasNormal) {
-		normal = mat * normal;
-	}
+}
+
+void Vertex::transformNormal(const Matrix4d & mat) {
+	normal = mat * normal;
 }
 
 void Vertex::addEdge(Edge *pe) {
@@ -75,12 +76,17 @@ void drawNormal(CDC * pDC, const Vertex & v, const Matrix4d & screenMat, COLORRE
 	draw(pDC, P, norm, c);
 }
 
+void Vertex::drawNormal(CDC *pDC, COLORREF c) {
+	draw(pDC, coord, normal, c);
+}
+
 double distance(const Vertex & v1, const Vertex & v2) {
 	return distance(v1.coord, v2.coord);
 }
 
 void Vertex::homegenize() {
 	coord.homegenize();
+	normal.homegenize();
 }
 
 /***********************/

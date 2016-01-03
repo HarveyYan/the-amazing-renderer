@@ -144,12 +144,13 @@ void WingedEdgeMesh::setColor(COLORREF c) {
 /**/
 
 void WingedEdgeMesh::transform(const Matrix4d & transMat) {
-	for (std::vector<Vertex*>::iterator v = vertexList.begin(); v != vertexList.end(); ++v) {
-		(*v)->transform(transMat);
+	for (Vertex * vp : vertexList) {
+		vp->transform(transMat);
+		vp->transformNormal(transMat);
 	}
 	
-	for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-		(*f)->transformNormal(transMat);
+	for (Face * fp : faceList) {
+		fp->transformNormal(transMat);
 	}
 }
 

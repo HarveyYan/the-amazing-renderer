@@ -26,7 +26,7 @@ public:
 	bool isBackFacing() const { return m_bBackFacing; }
 
 	void fill(CDC *pDC, COLORREF c);
-	void drawNormal(CDC *pDC, const Matrix4d & screenMat, COLORREF c);
+	void drawNormal(CDC *pDC, COLORREF c);
 	void transformNormal(const Matrix4d & transMat);
 	void homegenizeNormalPts();
 

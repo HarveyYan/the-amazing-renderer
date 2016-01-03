@@ -69,7 +69,7 @@ void Face::setNormal(double A, double B, double C, double _D) {
 	log_debug_vertex(normal_pt2);
 }
 
-void Face::drawNormal(CDC *pDC, const Matrix4d & screenMat, COLORREF c) {
+void Face::drawNormal(CDC *pDC, COLORREF c) {
 	draw(pDC, normal_pt1, normal_pt2, c);
 }
 

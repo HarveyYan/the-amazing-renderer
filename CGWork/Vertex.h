@@ -30,6 +30,7 @@ public:
 	double getH() const { return coord.getH(); }
 	Vector4d getCoord() const { return coord; }
 	void transform(const Matrix4d & mat);
+	void transformNormal(const Matrix4d & mat);
 
 	void homegenize();
 
@@ -43,6 +44,7 @@ public:
 	void approximateNormal();
 	Vector4d getNormal() const { return normal; }
 	bool hasNormal() const { return m_hasNormal; }
+	void drawNormal(CDC *pDC, COLORREF c);
 
 	/* Operators. */
 

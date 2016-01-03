@@ -405,6 +405,11 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {	
+	// TODO add button to clear all objects (reset)
+	// TODO handle face winding order (clockwise or anti-clockwise)
+	// TODO reverse normals option
+
+	// TODO return the onsize
 	SetupViewingFrustum();
 	SetupViewingOrthoConstAspect();
 
@@ -456,29 +461,29 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	log_debug_matrix(m_viewMat);
 	log_debug("MODEL MAT:\n");
 	log_debug_matrix(m_modelMat);
-	for (std::vector<WingedEdgeMesh>::iterator obj = OBJECTS.begin(); obj != OBJECTS.end(); ++obj)
+	for (WingedEdgeMesh & obj : OBJECTS)
 	{
 		if (m_tObjectSpace) {
 			if (m_bIsPerspective) {
-				transMat = m_perspCamera.normCubeMat * m_perspCamera.cameraMat * m_modelMat * obj->m_modelMat;
+				transMat = m_perspCamera.normCubeMat * m_perspCamera.cameraMat * m_modelMat * obj.m_modelMat;
 			}
 			else {
-				transMat = m_orthoCamera.normCubeMat * m_orthoCamera.cameraMat * m_modelMat * obj->m_modelMat;
+				transMat = m_orthoCamera.normCubeMat * m_orthoCamera.cameraMat * m_modelMat * obj.m_modelMat;
 			}
 		}
 		else {
 			if (m_bIsPerspective) {
-				transMat = m_perspCamera.normCubeMat * m_modelMat * obj->m_modelMat * m_perspCamera.cameraMat;
+				transMat = m_perspCamera.normCubeMat * m_modelMat * obj.m_modelMat * m_perspCamera.cameraMat;
 			}
 			else {
-				transMat = m_orthoCamera.normCubeMat * m_modelMat * obj->m_modelMat * m_orthoCamera.cameraMat;
+				transMat = m_orthoCamera.normCubeMat * m_modelMat * obj.m_modelMat * m_orthoCamera.cameraMat;
 			}
 		}
 
-		WingedEdgeMesh tmp_wem(*obj);
+		WingedEdgeMesh tmp_wem(obj);
 
 		if (m_bBackfaceCulling) {
-			tmp_wem.backFaceCulling(m_cameraP, m_modelMat * obj->m_modelMat, m_bIsPerspective);
+			tmp_wem.backFaceCulling(m_cameraP, m_modelMat * obj.m_modelMat, m_bIsPerspective);
 		}
 	
 		tmp_wem.transform(transMat);
@@ -495,9 +500,8 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		drawAxis(pDrawDC, transMat, m_screenMat);
 
 		if (m_showPolyNormals) {
-			std::vector<Face*> faceList = tmp_wem.getFaceList();
-			for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-				(*f)->drawNormal(pDrawDC, m_screenMat, obj->getNormalColor());
+			for (Face * f : tmp_wem.getFaceList()) {
+				f->drawNormal(pDrawDC, obj.getNormalColor());
 			}
 		}
 
@@ -506,7 +510,9 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		}
 
 		if (m_showVertexNormals) {
-			drawVertexNormals(pDrawDC, tmp_wem, m_screenMat);
+			for (Vertex * v : tmp_wem.getVertexList()) {
+				v->drawNormal(pDrawDC, obj.getNormalColor());
+			}
 		}
 	}
 
