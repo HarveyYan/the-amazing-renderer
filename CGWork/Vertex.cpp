@@ -59,15 +59,6 @@ void Vertex::approximateNormal() {
 	normal = normalize(normal);
 }
 
-//void draw(CDC * pDC, Vertex v1, Vertex v2, const Matrix4d & transMat, const Matrix4d screenMat, COLORREF c) { // TODO del
-void draw(CDC * pDC, Vertex v1, Vertex v2, const Matrix4d & screenMat, COLORREF c) {
-	/*v1.homegenize();
-	v2.homegenize();*/
-	v1.transform(screenMat);
-	v2.transform(screenMat);
-	midpoint_line_draw(pDC, v1.getX(), v1.getY(), v2.getX(), v2.getY(), c);
-}
-
 void draw(CDC * pDC, Vertex v1, Vertex v2, COLORREF c) {
 	midpoint_line_draw(pDC, v1.getX(), v1.getY(), v2.getX(), v2.getY(), c);
 }

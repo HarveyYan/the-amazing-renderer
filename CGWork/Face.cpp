@@ -78,29 +78,10 @@ void Face::homegenizeNormalPts() {
 	normal_pt2.homegenize();
 }
 
-void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF c) {
-	// TODO delete function
-	/*Vector4d P;
-	std::vector<Vertex*> vertices = f.getVertices();
-	for (std::vector<Vertex*>::const_iterator v = vertices.begin(); v != vertices.end(); ++v) {
-		P = P + (*v)->getCoord();
-	}
-	P = P / vertices.size();
-
-	Vector4d norm = P + f.getNormal();
-
-	P.homegenize();
-	norm.homegenize();
-	P = screenMat * P;
-	norm = screenMat * norm;*/
-
-	//draw(pDC, screenMat * normal_pt1, screenMat * normal_pt2, c);
-}
-
 void Face::transformNormal(const Matrix4d & transMat) {
-	normal = transMat * normal; // TODO needed?
 	normal_pt1 = transMat * normal_pt1;
 	normal_pt2 = transMat * normal_pt2;
+	normal = normalize(normal_pt2 - normal_pt1);
 }
 
 double closestZ(const Face & f) {
@@ -113,15 +94,6 @@ double closestZ(const Face & f) {
 	}
 	return cz;
 }
-
-//void draw(CDC* pDC, const Face & f, const Matrix4d & transMat, const Matrix4d & screenMat, COLORREF c) {
-//	std::vector<Vertex*> VL = f.getVertices();
-//	unsigned int i;
-//	for (i = 0; i < VL.size()-1; ++i) {
-//		draw(pDC, *VL[i], *VL[i+1], transMat, screenMat, c);
-//	}
-//	draw(pDC, *VL[i], *VL[0], transMat, screenMat, c);
-//}
 
 void Face::fillTriangle(CDC *pDC, const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c) {
 	PointTracker PT_12(v1, v2);

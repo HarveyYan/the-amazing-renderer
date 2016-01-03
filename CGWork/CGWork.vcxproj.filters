@@ -87,9 +87,6 @@
     <ClCompile Include="PointTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWireframeDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CGWork.rc">
@@ -242,9 +239,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderWireframeDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

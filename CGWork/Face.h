@@ -45,8 +45,6 @@ private:
 	bool m_bBackFacing;
 };
 
-void drawNormal(CDC * pDC, const Face & f, const Matrix4d & screenMat, COLORREF c);
 double closestZ(const Face & f);
-//void draw(CDC* pDC, const Face & f, const Matrix4d & transMat, const Matrix4d & screenMat, COLORREF c);
 
 void log_debug_face(const Face & f);

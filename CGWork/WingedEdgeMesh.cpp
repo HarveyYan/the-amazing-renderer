@@ -273,8 +273,7 @@ void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double 
 	depth = abs(z1 - z2);
 }
 
-// TODO delete screenMat from params
-void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, const Matrix4d & screenMat, bool bFill, bool bBackFaceCulling) {
+void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling) {
 	std::vector<Edge*> edgeList = wem.getEdgeList();
 	std::vector<Face*> faceList = wem.getFaceList();
 	COLORREF c = wem.getColor();
@@ -310,31 +309,31 @@ void drawBoundingBox(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & transMat, 
 	double y_max = qmax.getY();
 	double z_max = qmax.getZ();
 
-	Vertex v1(x_min, y_min, z_min),
-		v2(x_min, y_max, z_min),
-		v3(x_max, y_max, z_min),
-		v4(x_max, y_min, z_min),
-		v5(x_max, y_min, z_max),
-		v6(x_min, y_min, z_max),
-		v7(x_min, y_max, z_max),
-		v8(x_max, y_max, z_max);
+	static const int size = 8;
+	Vertex vertices[size] = { 
+		Vertex(x_min, y_min, z_min),
+		Vertex(x_min, y_max, z_min),
+		Vertex(x_max, y_max, z_min),
+		Vertex(x_max, y_min, z_min),
+		Vertex(x_max, y_min, z_max),
+		Vertex(x_min, y_min, z_max),
+		Vertex(x_min, y_max, z_max),
+		Vertex(x_max, y_max, z_max)};
 
 	Matrix4d M = transMat * obj.m_modelMat;
-	v1.transform(M); v2.transform(M); v3.transform(M); v4.transform(M); 
-	v5.transform(M); v6.transform(M); v7.transform(M); v8.transform(M);
-
-	draw(pDC, v1, v2, screenMat, obj.getColor());
-	draw(pDC, v2, v3, screenMat, obj.getColor());
-	draw(pDC, v3, v4, screenMat, obj.getColor());
-	draw(pDC, v4, v5, screenMat, obj.getColor());
-	draw(pDC, v5, v6, screenMat, obj.getColor());
-	draw(pDC, v6, v7, screenMat, obj.getColor());
-	draw(pDC, v7, v8, screenMat, obj.getColor());
-	draw(pDC, v1, v6, screenMat, obj.getColor());
-	draw(pDC, v2, v7, screenMat, obj.getColor());
-	draw(pDC, v3, v8, screenMat, obj.getColor());
-	draw(pDC, v1, v4, screenMat, obj.getColor());
-	draw(pDC, v5, v8, screenMat, obj.getColor());
+	for (Vertex & v : vertices) {
+		v.transform(M);
+		v.homegenize();
+		v.transform(screenMat);
+	}
+	for (int i = 0; i < size-1; ++i) {
+		draw(pDC, vertices[i], vertices[i + 1], obj.getColor());
+	}
+	draw(pDC, vertices[0], vertices[5], obj.getColor());
+	draw(pDC, vertices[1], vertices[6], obj.getColor());
+	draw(pDC, vertices[2], vertices[7], obj.getColor());
+	draw(pDC, vertices[0], vertices[3], obj.getColor());
+	draw(pDC, vertices[4], vertices[7], obj.getColor());
 }
 
 void drawVertexNormals(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & screenMat) {

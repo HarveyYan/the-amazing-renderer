@@ -57,8 +57,6 @@ private:
 };
 
 
-//void draw(CDC * pDC, Vertex v1, Vertex v2, const Matrix4d & transMat, const Matrix4d screenMat, COLORREF c); // TODO del
-void draw(CDC * pDC, Vertex v1, Vertex v2, const Matrix4d & screenMat, COLORREF c);
 void draw(CDC * pDC, Vertex v1, Vertex v2, COLORREF c);
 void drawNormal(CDC * pDC, const Vertex & v, const Matrix4d & screenMat, COLORREF c);
 double distance(const Vertex & v1, const Vertex & v2);

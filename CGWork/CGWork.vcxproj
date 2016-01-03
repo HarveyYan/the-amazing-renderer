@@ -214,7 +214,6 @@
     <ClCompile Include="myHelpers.cpp" />
     <ClCompile Include="PngWrapper.cpp" />
     <ClCompile Include="PointTracker.cpp" />
-    <ClCompile Include="RenderWireframeDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -255,7 +254,6 @@
     <ClInclude Include="myHelpers.h" />
     <ClInclude Include="PngWrapper.h" />
     <ClInclude Include="PointTracker.h" />
-    <ClInclude Include="RenderWireframeDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="..\include\allocate.h" />

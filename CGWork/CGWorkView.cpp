@@ -486,10 +486,10 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		tmp_wem.transform(m_screenMat);
 
 		if (m_bWireframe) {
-			drawMesh(pDrawDC, tmp_wem, m_screenMat, false, m_bBackfaceCulling);
+			drawMesh(pDrawDC, tmp_wem, false, m_bBackfaceCulling);
 		}
 		if (m_bRender) {
-			drawMesh(pDrawDC, tmp_wem, m_screenMat, true, m_bBackfaceCulling);
+			drawMesh(pDrawDC, tmp_wem, true, m_bBackfaceCulling);
 		}
 
 		drawAxis(pDrawDC, transMat, m_screenMat);
@@ -525,22 +525,6 @@ void CCGWorkView::OnDraw(CDC* pDC)
 void CCGWorkView::OnDestroy() 
 {
 	CView::OnDestroy();
-
-	// TODO del (not needed as ctor frees these up)
-	/*for (std::vector<WingedEdgeMesh>::iterator obj = OBJECTS.begin(); obj != OBJECTS.end(); ++obj) {
-		std::vector<Vertex*> vertexList = obj->getVertexList();
-		std::vector<Edge*> edgeList = obj->getEdgeList();
-		std::vector<Face*> faceList = obj->getFaceList();
-		for (std::vector<Face*>::iterator f = faceList.begin(); f != faceList.end(); ++f) {
-			delete *f;
-		}
-		for (std::vector<Vertex*>::iterator v = vertexList.begin(); v != vertexList.end(); ++v) {
-			delete *v;
-		}
-		for (std::vector<Edge*>::iterator e = edgeList.begin(); e != edgeList.end(); ++e) {
-			delete *e;
-		}
-	}*/
 
 	// delete the DC
 	if ( m_pDC ) {
@@ -1172,13 +1156,12 @@ void CCGWorkView::calculateBoundingBox(WingedEdgeMesh & obj) {
 
 void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat) {
 	Vertex ax(1, 0, 0), ay(0, 1, 0), az(0, 0, -1), P(0,0,0);
-	ax.transform(transMat);
-	ay.transform(transMat);
-	az.transform(transMat);
-	P.transform(transMat);
+	ax.transform(transMat); ay.transform(transMat); az.transform(transMat); P.transform(transMat);
+	ax.homegenize(); ay.homegenize(); az.homegenize(); P.homegenize();
+	ax.transform(screenMat); ay.transform(screenMat); az.transform(screenMat); P.transform(screenMat);
 
-	draw(pDC, P, ax, screenMat, RGB(255, 0, 0));
-	draw(pDC, P, ay, screenMat, RGB(0, 255, 0));
-	draw(pDC, P, az, screenMat, RGB(0, 0, 255));
+	draw(pDC, P, ax, RGB(255, 0, 0));
+	draw(pDC, P, ay, RGB(0, 255, 0));
+	draw(pDC, P, az, RGB(0, 0, 255));
 }
 
