@@ -41,6 +41,7 @@ public:
 
 	void setNormal(const Vector4d & n);
 	void setNormal(double x, double y, double z);
+	void inverseNormal();
 	void approximateNormal();
 	void calcNormalEndPts();
 	Vector4d getNormal() const { return normal; }

@@ -46,6 +46,12 @@ public:
 	COLORREF getSilhColor() const { return silhColor; }
 	void highLightSilh(CDC *pDC);
 
+	enum Winding {CW, CCW};
+	Winding getWinding() const { return winding; }
+	void getWinding(Winding w) { winding = w; }
+
+	void inverseNormals();
+
 private:
 	std::vector<Vertex*> vertexList;
 	std::vector<Edge*> edgeList;
@@ -55,6 +61,7 @@ private:
 	COLORREF silhColor = RGB(255, 255, 0);
 	int silhLineThickness = 4;
 	Vector4d Qmin, Qmax;
+	Winding winding;
 };
 
 double diameter(const WingedEdgeMesh & wem);

@@ -61,10 +61,6 @@ void Face::setNormal(double A, double B, double C, double _D) {
 	}
 	normal_pt1 = normal_pt1 / vertices.size();
 	normal_pt2 = normal_pt1 - normal;
-
-	log_debug("face normal pts: ");
-	log_debug_vertex(normal_pt1);
-	log_debug_vertex(normal_pt2);
 }
 
 void Face::calcNormalEndPts() {
@@ -74,9 +70,11 @@ void Face::calcNormalEndPts() {
 	}
 	normal_pt1 = normal_pt1 / vertices.size();
 	normal_pt2 = normal_pt1 + normal;
-	log_debug("face normal pts: ");
-	log_debug_vertex(normal_pt1);
-	log_debug_vertex(normal_pt2);
+}
+
+void Face::inverseNormal() {
+	normal = -normal;
+	normal_pt2 = normal_pt1 + normal;
 }
 
 void Face::drawNormal(CDC *pDC, COLORREF c) {

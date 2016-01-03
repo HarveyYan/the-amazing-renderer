@@ -23,6 +23,7 @@ public:
 	void setNormal(const Vector4d & n);
 	void calcNormalEndPts();
 	Vector4d getNormal() const { return normal; }
+	void inverseNormal();
 	void setBackFacing(bool isBackFacing) { m_bBackFacing = isBackFacing; }
 	bool isBackFacing() const { return m_bBackFacing; }
 

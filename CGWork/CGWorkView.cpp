@@ -109,6 +109,13 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_RENDERING_RENDER, &CCGWorkView::OnUpdateRenderingRender)
 	ON_COMMAND(ID_RENDERING_BACKFACECULLING, &CCGWorkView::OnRenderingBackfaceculling)
 	ON_UPDATE_COMMAND_UI(ID_RENDERING_BACKFACECULLING, &CCGWorkView::OnUpdateRenderingBackfaceculling)
+	ON_COMMAND(ID_NORMAL_APPROXIMATEVERTEXNORMALS, &CCGWorkView::OnNormalApproximatevertexnormals)
+	ON_UPDATE_COMMAND_UI(ID_NORMAL_APPROXIMATEVERTEXNORMALS, &CCGWorkView::OnUpdateNormalApproximatevertexnormals)
+	ON_COMMAND(ID_NORMAL_INVERSENORMALS, &CCGWorkView::OnNormalInversenormals)
+	ON_UPDATE_COMMAND_UI(ID_NORMAL_INVERSENORMALS, &CCGWorkView::OnUpdateNormalInversenormals)
+	ON_COMMAND(ID_OPTIONS_SHOWSILHOUETTE, &CCGWorkView::OnOptionsShowsilhouette)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWSILHOUETTE, &CCGWorkView::OnUpdateOptionsShowsilhouette)
+	ON_COMMAND(ID_ACTION_CLEARALL, &CCGWorkView::OnActionClearall)
 END_MESSAGE_MAP()
 
 
@@ -223,7 +230,10 @@ CCGWorkView::CCGWorkView()
 	m_bWireframe = true;
 	m_bBackfaceCulling = false;
 
-	m_bSilhHighligh = true;
+	m_bSilhHighligh = false;
+
+	m_bApproxVertexNormals = false;
+	m_bInverseNormals = false;
 }
 
 CCGWorkView::~CCGWorkView()
@@ -407,10 +417,7 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {	
-	// TODO add button to clear all objects (reset)
-	// TODO handle face winding order (clockwise or anti-clockwise)
-	// TODO reverse normals option
-	// TODO add menu option to change silhoette highligh color
+	// TODO add menu option to change silhoette highlight color
 
 	// TODO return the onsize
 	SetupViewingFrustum();
@@ -484,6 +491,16 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		}
 
 		WingedEdgeMesh tmp_wem(obj);
+
+		if (m_bApproxVertexNormals) {
+			for (Vertex * vp : tmp_wem.getVertexList()) {
+				vp->approximateNormal();
+			}
+		}
+
+		if (m_bInverseNormals) {
+			tmp_wem.inverseNormals();
+		}
 
 		tmp_wem.calcBackFaceCulling(m_cameraP, m_modelMat * obj.m_modelMat, m_bIsPerspective);
 	
@@ -562,6 +579,9 @@ void CCGWorkView::RenderScene() {
 void CCGWorkView::OnFileLoad() 
 {
 	static int lastAdded = -1;
+	if (OBJECTS.size() == 0) {
+		lastAdded = -1;
+	}
 
 	TCHAR szFilters[] = _T ("IRIT Data Files (*.itd)|*.itd|All Files (*.*)|*.*||");
 
@@ -1117,13 +1137,11 @@ void CCGWorkView::OnUpdateRenderingWireframe(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_bWireframe);
 }
 
-
 void CCGWorkView::OnRenderingRender()
 {
 	m_bRender = !m_bRender;
 	Invalidate();
 }
-
 
 void CCGWorkView::OnUpdateRenderingRender(CCmdUI *pCmdUI)
 {
@@ -1136,10 +1154,42 @@ void CCGWorkView::OnRenderingBackfaceculling()
 	Invalidate();
 }
 
-
 void CCGWorkView::OnUpdateRenderingBackfaceculling(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_bBackfaceCulling);
+}
+
+void CCGWorkView::OnNormalApproximatevertexnormals()
+{
+	m_bApproxVertexNormals = !m_bApproxVertexNormals;
+	Invalidate();
+}
+
+void CCGWorkView::OnUpdateNormalApproximatevertexnormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bApproxVertexNormals);
+}
+
+void CCGWorkView::OnNormalInversenormals()
+{
+	m_bInverseNormals = !m_bInverseNormals;
+	Invalidate();
+}
+
+void CCGWorkView::OnUpdateNormalInversenormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bInverseNormals);
+}
+
+void CCGWorkView::OnOptionsShowsilhouette()
+{
+	m_bSilhHighligh = !m_bSilhHighligh;
+	Invalidate();
+}
+
+void CCGWorkView::OnUpdateOptionsShowsilhouette(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bSilhHighligh);
 }
 
 
@@ -1190,3 +1240,11 @@ void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat) {
 	draw(pDC, P, az, RGB(0, 0, 255));
 }
 
+
+
+void CCGWorkView::OnActionClearall()
+{
+	OBJECTS.clear();
+	m_modelMat = ID_MAT;
+	Invalidate();
+}

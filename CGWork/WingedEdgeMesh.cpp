@@ -17,6 +17,7 @@
 WingedEdgeMesh::WingedEdgeMesh()
 {
 	m_modelMat = ID_MAT;
+	winding = CW;
 }
 
 WingedEdgeMesh::WingedEdgeMesh(const WingedEdgeMesh & other) {
@@ -25,6 +26,7 @@ WingedEdgeMesh::WingedEdgeMesh(const WingedEdgeMesh & other) {
 	normalColor = other.normalColor;
 	Qmin = other.Qmin;
 	Qmax = other.Qmax;
+	winding = other.winding;
 
 	VertexMap verticesMap;
 	EdgeMap edgesMap;
@@ -164,7 +166,12 @@ void WingedEdgeMesh::calcBackFaceCulling(const Vector4d & cameraP, const Matrix4
 		Vector4d n = modelMat * (*f_itr)->normal_pt2 - modelMat * (*f_itr)->normal_pt1;
 		// Vector from the camera to one of the face vertices (in world space).
 		Vector4d v = modelMat * (*f_itr)->getVertices().at(0)->getCoord() - cameraP;
-		if ((bIsPerspective && dot_product(n, v) < 0) || (!bIsPerspective && n.getZ() < 0)) {
+
+		bool perspBackFacing = bIsPerspective &&
+			((winding == CW && dot_product(n, v) < 0) || (winding == CCW && dot_product(n, v) > 0));
+		bool orthoBackFacing = !bIsPerspective &&
+			((winding == CW && n.getZ() < 0) || (winding == CCW && n.getZ() > 0));
+		if (perspBackFacing || orthoBackFacing) {
 			(*f_itr)->setBackFacing(true);
 		}
 		else {
@@ -179,6 +186,21 @@ void WingedEdgeMesh::homegenize() {
 	}
 	for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
 		(*f_itr)->homegenizeNormalPts();
+	}
+}
+
+void WingedEdgeMesh::inverseNormals() {
+	for (Vertex * vp : vertexList) {
+		vp->inverseNormal();
+	}
+	for (Face * fp : faceList) {
+		fp->inverseNormal();
+	}
+	if (winding == CW) {
+		winding = CCW;
+	}
+	else {
+		winding = CW;
 	}
 }
 

@@ -200,7 +200,7 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 20, 16
+IDR_MAINFRAME TOOLBAR 42, 16
 BEGIN
     BUTTON      ID_FILE_LOAD
     SEPARATOR
@@ -217,6 +217,11 @@ BEGIN
     BUTTON      ID_AXIS_XY
     BUTTON      ID_VIEW_OBJECT_SPACE
     BUTTON      ID_VIEW_VIEW_SPACE
+    SEPARATOR
+    BUTTON      ID_ACTION_CLEARALL
+    BUTTON      ID_BUTTON32822
+    BUTTON      ID_BUTTON32823
+    BUTTON      ID_BUTTON32820
 END
 
 
@@ -251,6 +256,7 @@ BEGIN
         MENUITEM "View Space",                  32805
         MENUITEM SEPARATOR
         MENUITEM "All Objects",                 ID_ACTION_ALLOBJECTS
+        MENUITEM "Clear All",                   ID_ACTION_CLEARALL
     END
     POPUP "A&xis"
     BEGIN
@@ -258,20 +264,6 @@ BEGIN
         MENUITEM "&Y",                          ID_AXIS_Y
         MENUITEM "&Z",                          ID_AXIS_Z
         MENUITEM "XY",                          ID_AXIS_XY
-    END
-    POPUP "&Options"
-    BEGIN
-        MENUITEM "Perspective Control...",      ID_OPTIONS_PERSPECTIVECONTROL
-        MENUITEM "Mouse Sensitivity...",        ID_OPTIONS_MOUSESENSITIVITY
-        MENUITEM "Fineness Control",            ID_OPTIONS_FINENESSCONTROL
-        MENUITEM "Change Color",                ID_OPTIONS_CHANGECOLOR
-        MENUITEM SEPARATOR
-        MENUITEM "Show Polygon Normals",        ID_VIEW_SHOWPOLY
-        MENUITEM "Show Vertex Normals",         ID_OPTIONS_SHOWVERTEXNORMALS
-        MENUITEM "Show Bounding Box",           ID_OPTIONS_SHOWBOUNDINGBOX
-        MENUITEM SEPARATOR
-        MENUITEM "Highlight Face",              ID_OPTIONS_HIGHLIGHTFACE
-        MENUITEM SEPARATOR
     END
     POPUP "&Light"
     BEGIN
@@ -286,7 +278,31 @@ BEGIN
     BEGIN
         MENUITEM "Wireframe",                   ID_RENDERING_WIREFRAME
         MENUITEM "Render",                      ID_RENDERING_RENDER
+    END
+    POPUP "Normal"
+    BEGIN
+        MENUITEM "Show Polygon Normals",        ID_VIEW_SHOWPOLY
+        MENUITEM "Show Vertex Normals",         ID_OPTIONS_SHOWVERTEXNORMALS
+        MENUITEM SEPARATOR
+        MENUITEM "Approximate Vertex Normals",  ID_NORMAL_APPROXIMATEVERTEXNORMALS
+        MENUITEM "Inverse Normals",             ID_NORMAL_INVERSENORMALS
+    END
+    POPUP "Show"
+    BEGIN
+        MENUITEM "Show Bounding Box",           ID_OPTIONS_SHOWBOUNDINGBOX
+        MENUITEM "Show Silhouette",             ID_OPTIONS_SHOWSILHOUETTE
         MENUITEM "Backface Culling",            ID_RENDERING_BACKFACECULLING
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "Perspective Control...",      ID_OPTIONS_PERSPECTIVECONTROL
+        MENUITEM "Mouse Sensitivity...",        ID_OPTIONS_MOUSESENSITIVITY
+        MENUITEM "Fineness Control",            ID_OPTIONS_FINENESSCONTROL
+        MENUITEM "Change Color",                ID_OPTIONS_CHANGECOLOR
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "Highlight Face",              ID_OPTIONS_HIGHLIGHTFACE
+        MENUITEM SEPARATOR
     END
     POPUP "&Help"
     BEGIN

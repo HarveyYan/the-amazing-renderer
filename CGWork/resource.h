@@ -84,13 +84,20 @@
 #define ID_RENDERING_WIREFRAME          32813
 #define ID_RENDERING_RENDER             32814
 #define ID_RENDERING_BACKFACECULLING    32815
+#define ID_NORMAL_APPROXIMATEVERTEXNORMALS 32816
+#define ID_NORMAL_INVERSENORMALS        32817
+#define ID_OPTIONS_SHOWSILHOUETTE       32818
+#define ID_ACTION_CLEARALL              32819
+#define ID_BUTTON32820                  32820
+#define ID_BUTTON32822                  32822
+#define ID_BUTTON32823                  32823
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        143
-#define _APS_NEXT_COMMAND_VALUE         32816
+#define _APS_NEXT_COMMAND_VALUE         32824
 #define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

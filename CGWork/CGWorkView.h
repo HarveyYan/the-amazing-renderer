@@ -141,6 +141,9 @@ protected:
 
 	bool m_bSilhHighligh;
 
+	bool m_bApproxVertexNormals;
+	bool m_bInverseNormals;
+
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CCGWorkView)
@@ -202,6 +205,13 @@ public:
 	afx_msg void OnUpdateRenderingRender(CCmdUI *pCmdUI);
 	afx_msg void OnRenderingBackfaceculling();
 	afx_msg void OnUpdateRenderingBackfaceculling(CCmdUI *pCmdUI);
+	afx_msg void OnNormalApproximatevertexnormals();
+	afx_msg void OnUpdateNormalApproximatevertexnormals(CCmdUI *pCmdUI);
+	afx_msg void OnNormalInversenormals();
+	afx_msg void OnUpdateNormalInversenormals(CCmdUI *pCmdUI);
+	afx_msg void OnOptionsShowsilhouette();
+	afx_msg void OnUpdateOptionsShowsilhouette(CCmdUI *pCmdUI);
+	afx_msg void OnActionClearall();
 };
 
 void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat);

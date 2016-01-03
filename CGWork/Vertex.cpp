@@ -64,6 +64,11 @@ void Vertex::approximateNormal() {
 	calcNormalEndPts();
 }
 
+void Vertex::inverseNormal() {
+	normal = -normal;
+	calcNormalEndPts();
+}
+
 void Vertex::calcNormalEndPts() {
 	normal_pt2 = coord + normal;
 }
