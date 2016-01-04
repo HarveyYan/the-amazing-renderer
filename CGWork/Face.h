@@ -6,6 +6,9 @@
 #include "Edge.h"
 #include "Vector4d.h"
 
+class ZBuffer;
+class PointTracker;
+
 class Face
 {
 public:
@@ -27,7 +30,7 @@ public:
 	void setBackFacing(bool isBackFacing) { m_bBackFacing = isBackFacing; }
 	bool isBackFacing() const { return m_bBackFacing; }
 
-	void fill(CDC *pDC, COLORREF c);
+	void fill(CDC *pDC, COLORREF c, ZBuffer * zbuf = NULL);
 	void drawNormal(CDC *pDC, COLORREF c);
 	void transformNormal(const Matrix4d & transMat);
 	void homegenizeNormalPts();
@@ -49,6 +52,8 @@ double closestZ(const Face & f);
 void log_debug_face(const Face & f);
 
 // assume that vertices are sorted by y in ascending order
+void scanline(CDC *pDC, PointTracker & PT1, PointTracker & PT2, COLORREF c, ZBuffer * zbuf = NULL);
 void fillTriangle(
 	CDC *pDC,
-	const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c);
+	const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c,
+	ZBuffer * zbuf = NULL);

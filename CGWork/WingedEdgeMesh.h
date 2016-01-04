@@ -7,6 +7,7 @@
 class Vertex;
 class Edge;
 class Face;
+class ZBuffer;
 
 // WingedEdgeMesh holds all of the vertices, edges, and faces. Includes all of the adjacency information.
 class WingedEdgeMesh
@@ -68,7 +69,7 @@ double diameter(const WingedEdgeMesh & wem);
 double diameter(const std::vector<WingedEdgeMesh> & objects);
 double diameterUpperBound(const std::vector<WingedEdgeMesh> & objects);
 void BBSize(const std::vector<WingedEdgeMesh> & objects, double & width, double & height, double & depth);
-void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling);
+void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling, ZBuffer *zbuf = NULL);
 void drawBoundingBox(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & transMat, const Matrix4d & screenMat);
 void drawVertexNormals(CDC* pDC, WingedEdgeMesh & obj, const Matrix4d & screenMat);
 

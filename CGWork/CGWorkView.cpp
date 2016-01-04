@@ -35,6 +35,7 @@ static char THIS_FILE[] = __FILE__;
 #include "WingedEdgeMesh.h"
 #include "Matrix4d.h"
 #include "Vector4d.h"
+#include "ZBuffer.h"
 
 // For Status Bar access
 #include "MainFrm.h"
@@ -423,6 +424,8 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	SetupViewingFrustum();
 	SetupViewingOrthoConstAspect();
 
+	ZBuffer zbuf(m_WindowWidth, m_WindowHeight);
+
 	CDC dc;
 	CDC* pDrawDC = pDC;
 	CBitmap bitmap;
@@ -513,10 +516,10 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		log_debug("\n\n\n");*/
 
 		if (m_bWireframe) {
-			drawMesh(pDrawDC, tmp_wem, false, m_bBackfaceCulling);
+			drawMesh(pDrawDC, tmp_wem, false, m_bBackfaceCulling, &zbuf);
 		}
 		if (m_bRender) {
-			drawMesh(pDrawDC, tmp_wem, true, m_bBackfaceCulling);
+			drawMesh(pDrawDC, tmp_wem, true, m_bBackfaceCulling, &zbuf);
 		}
 
 		drawAxis(pDrawDC, transMat, m_screenMat);

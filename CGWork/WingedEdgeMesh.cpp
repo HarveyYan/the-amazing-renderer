@@ -295,7 +295,7 @@ void WingedEdgeMesh::highLightSilh(CDC *pDC) {
 	}
 }
 
-void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling) {
+void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCulling, ZBuffer * zbuf /*=NULL*/) {
 	std::vector<Edge*> edgeList = wem.getEdgeList();
 	std::vector<Face*> faceList = wem.getFaceList();
 	COLORREF c = wem.getColor();
@@ -303,7 +303,7 @@ void drawMesh(CDC *pDC, const WingedEdgeMesh & wem, bool bFill, bool bBackFaceCu
 	if (bFill) {
 		for (auto f_itr = faceList.begin(); f_itr != faceList.end(); ++f_itr) {
 			if (!bBackFaceCulling || !(*f_itr)->isBackFacing()) {
-				(*f_itr)->fill(pDC, c);
+				(*f_itr)->fill(pDC, c, zbuf);
 			}
 		}
 	}
