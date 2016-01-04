@@ -104,42 +104,75 @@ double closestZ(const Face & f) {
 	return cz;
 }
 
+void scanline(CDC *pDC, double x1, double x2, int y, COLORREF c) {
+	int leftx = min(floor(x1), floor(x2));
+	int rightx = max(floor(x1), floor(x2));
+	for (int ix = leftx; ix <= rightx; ++ix) {
+		pDC->SetPixel(ix, y, c);
+	}
+}
+
 void fillTriangle(
 	CDC *pDC, 
 	const Vertex & v1, const Vertex & v2, const Vertex & v3, COLORREF c) 
 {
-	PointTracker PT_12(v1, v2);
 	PointTracker PT_13(v1, v3);
-
-	if (!PT_12.isValid()) {
-		draw(pDC, v1, v2, c);
-	}
-	
-	// Upper triangle
-	while (PT_12.isValid() && PT_13.isValid()) {
-		int leftx = min(floor(PT_12.x), floor(PT_13.x));
-		int rightx = max(floor(PT_12.x), floor(PT_13.x));
-		for (int ix = leftx; ix < rightx; ++ix) {
-			pDC->SetPixel(ix, PT_12.y, c);
-		}
-		PT_12.yStep();
-		PT_13.yStep();
-	 } 
-
-	// Lower triangle
 	PointTracker PT_23(v2, v3);
-	if (!PT_23.isValid()) {
-		draw(pDC, v2, v3, c);
-	}
 	while (PT_13.isValid() && PT_23.isValid()) {
-		int leftx = min(floor(PT_23.x), floor(PT_13.x));
-		int rightx = max(floor(PT_23.x), floor(PT_13.x));
-		for (int ix = leftx; ix < rightx; ++ix) {
-			pDC->SetPixel(ix, PT_23.y, c);
-		}
+		scanline(pDC, PT_13.x, PT_23.x, PT_13.y, c);
 		PT_13.yStep();
 		PT_23.yStep();
 	}
+
+	PointTracker PT_12(v1, v2);
+	while (PT_12.isValid() && PT_13.isValid()) {
+		scanline(pDC, PT_12.x, PT_13.x, PT_12.y, c);
+		PT_12.yStep();
+		PT_13.yStep();
+	}
+
+	//PointTracker PT_12(v1, v2);
+	//PointTracker PT_13(v1, v3);
+
+	///*if (!PT_12.isValid()) {
+	//	draw(pDC, v1, v2, RGB(255,0,0));
+	//}*/
+	//
+	//// Upper triangle
+	//while (PT_12.isValid() && PT_13.isValid()) {
+	//	int leftx = min(floor(PT_12.x), floor(PT_13.x));
+	//	int rightx = max(floor(PT_12.x), floor(PT_13.x));
+	//	for (int ix = leftx; ix <= rightx; ++ix) {
+	//		pDC->SetPixel(ix, PT_12.y, RGB(200,200,200));
+	//	}
+	//	/*pDC->SetPixel(leftx, PT_12.y, RGB(0, 255, 0));
+	//	pDC->SetPixel(rightx, PT_12.y, RGB(0, 0, 255));*/
+	//	PT_12.yStep();
+	//	PT_13.yStep();
+	// } 
+
+	//// Lower triangle
+	//PointTracker PT_23(v2, v3);
+	////if (!PT_23.isValid()) {
+	////	draw(pDC, v2, v3, RGB(255, 255, 0));
+	////	/*Vertex vtmp2(v2.getCoord() + Vector4d(0, 1, 0));
+	////	Vertex vtmp3 = v3.getCoord() + Vector4d(0, 1, 0);
+	////	draw(pDC, vtmp2, vtmp3, c);
+	////	vtmp2 = vtmp2.getCoord() - Vector4d(0, 2, 0);
+	////	vtmp3 = vtmp3.getCoord() - Vector4d(0, 2, 0);
+	////	draw(pDC, vtmp2, vtmp3, c);*/
+	////}
+	//while (PT_13.isValid() && PT_23.isValid()) {
+	//	int leftx = min(floor(PT_23.x), floor(PT_13.x));
+	//	int rightx = max(floor(PT_23.x), floor(PT_13.x));
+	//	for (int ix = leftx; ix <= rightx; ++ix) {
+	//		pDC->SetPixel(ix, PT_23.y, RGB(200,200,200));
+	//	}
+	//	/*pDC->SetPixel(leftx, PT_12.y, RGB(0, 255, 255));
+	//	pDC->SetPixel(rightx, PT_12.y, RGB(255, 0, 255));*/
+	//	PT_13.yStep();
+	//	PT_23.yStep();
+	//}
 }
 
 void Face::fill(CDC *pDC, COLORREF c) {

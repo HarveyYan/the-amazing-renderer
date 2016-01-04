@@ -13,10 +13,12 @@ public:
 	bool yStep();
 	bool isValid() const { return valid; }
 
-	double x, y, z;
+	double x, z;
+	int y;
 
 private:
 	double x1, y1, z1, x2, y2, z2;
+	double dx, dy, dz;
 	double xinc, zinc;
 	bool valid;
 };
