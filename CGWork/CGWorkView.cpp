@@ -18,6 +18,7 @@ using std::endl;
 #include "MouseSensitivityDlg.h"
 #include "DialogChangeColor.h"
 #include "DialogFineness.h"
+#include "DialogSelectSize.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -117,6 +118,16 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_OPTIONS_SHOWSILHOUETTE, &CCGWorkView::OnOptionsShowsilhouette)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWSILHOUETTE, &CCGWorkView::OnUpdateOptionsShowsilhouette)
 	ON_COMMAND(ID_ACTION_CLEARALL, &CCGWorkView::OnActionClearall)
+	ON_COMMAND(ID_RENDER_ONSCREEN, &CCGWorkView::OnRenderOnscreen)
+	ON_COMMAND(ID_RENDER_TOFILE, &CCGWorkView::OnRenderTofile)
+	ON_UPDATE_COMMAND_UI(ID_RENDER_ONSCREEN, &CCGWorkView::OnUpdateRenderOnscreen)
+	ON_UPDATE_COMMAND_UI(ID_RENDER_TOFILE, &CCGWorkView::OnUpdateRenderTofile)
+	ON_COMMAND(ID_RENDER_BACKGROUNDPNG32828, &CCGWorkView::OnRenderBackgroundpng32828)
+	ON_UPDATE_COMMAND_UI(ID_RENDER_BACKGROUNDPNG32828, &CCGWorkView::OnUpdateRenderBackgroundpng32828)
+	ON_COMMAND(ID_BACKGROUNDPNG_STRENTCH, &CCGWorkView::OnBackgroundpngStrentch)
+	ON_COMMAND(ID_BACKGROUNDPNG_REPEAT, &CCGWorkView::OnBackgroundpngRepeat)
+	ON_UPDATE_COMMAND_UI(ID_BACKGROUNDPNG_STRENTCH, &CCGWorkView::OnUpdateBackgroundpngStrentch)
+	ON_UPDATE_COMMAND_UI(ID_BACKGROUNDPNG_REPEAT, &CCGWorkView::OnUpdateBackgroundpngRepeat)
 END_MESSAGE_MAP()
 
 
@@ -290,7 +301,11 @@ int CCGWorkView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	InitializeCGWork();
 
-	/*CRect r;
+	m_toFile = false;
+	m_bkgPng = false;
+	m_isStretch = false;
+	m_size = 100;
+	/*CRect r;ondraw
 	GetClientRect(&r);
 	m_pDbDC = new CDC();
 	m_pDbDC->CreateCompatibleDC(GetDC());
@@ -448,7 +463,19 @@ void CCGWorkView::OnDraw(CDC* pDC)
 		}
 	}
 
-	pDrawDC->FillSolidRect(&rect, m_bgColor);
+	if (m_bkgPng){
+		CImage img;
+		img.Load(m_pathPNG);
+		if (m_isStretch)
+			img.Draw(pDrawDC->m_hDC, 0, 0, rect.Width(), rect.Height(), 0, 0, img.GetWidth(), img.GetHeight());
+		else{
+			for (int i = 0; i < rect.Width(); i += img.GetWidth())
+				for (int j = 0; j < rect.Height(); j += img.GetHeight())
+					img.Draw(pDrawDC->m_hDC, i, j, img.GetWidth(), img.GetHeight(), 0, 0, img.GetWidth(), img.GetHeight());
+		}
+	}
+	else
+		pDrawDC->FillSolidRect(&rect, m_bgColor);
 
 	CCGWorkDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -548,7 +575,25 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	if (pDrawDC != pDC) {
 		pDC->BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc, rect.left, rect.top, SRCCOPY);
 	}
+	if (m_bRender && m_toFile){
+		CImage image;
+		image.Attach(bitmap.operator HBITMAP());
 
+		int newWidth = image.GetWidth()*m_size / 100.0;
+		int newHeight = image.GetHeight()*m_size / 100.0;
+
+		pDrawDC->StretchBlt(0,0,newWidth,newHeight, pDrawDC, 0, 0 , image.GetWidth(), image.GetHeight(), SRCCOPY);//This is the way to "stretch" a png, which I cannot be sure of its appropriateness...
+		PngWrapper pwrapper("test.png", newWidth, newHeight);
+		pwrapper.InitWritePng();
+		for (int i = 0; i < newWidth; i++) {
+			for (int j = 0; j < newHeight; j++) {
+				pwrapper.SetValue(i, j, SET_RGB(GetRValue(pDrawDC->GetPixel(i, j)), GetGValue(pDrawDC->GetPixel(i, j)), GetBValue(pDrawDC->GetPixel(i, j))));
+			}
+		}
+		pwrapper.WritePng();
+
+		m_toFile = false;
+	}
 	log_debug("done\n");
 }
 
@@ -1250,4 +1295,133 @@ void CCGWorkView::OnActionClearall()
 	OBJECTS.clear();
 	m_modelMat = ID_MAT;
 	Invalidate();
+}
+
+
+void CCGWorkView::OnRenderOnscreen()
+{
+	if (m_bRender == true && m_toFile == false)
+		m_bRender = false;
+	else{
+		m_bRender = true;
+		m_toFile = false;
+	}
+	Invalidate();
+}
+
+
+void CCGWorkView::OnRenderTofile()
+{
+	if (m_bRender == true && m_toFile == true)
+		m_bRender = false;
+	else{
+		m_bRender = true;
+		m_toFile = true;
+	}
+
+	DialogSelectSize dlg;
+	dlg.size = 100;
+	if (dlg.DoModal() == IDOK)
+		m_size = dlg.size;
+
+
+	Invalidate();
+}
+
+
+void CCGWorkView::OnUpdateRenderOnscreen(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(!m_toFile&&m_bRender);
+}
+
+
+void CCGWorkView::OnUpdateRenderTofile(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_toFile&&m_bRender);
+}
+
+
+void CCGWorkView::OnRenderBackgroundpng32828()
+{
+	//m_bkgPng = !m_bkgPng;
+}
+
+
+void CCGWorkView::OnUpdateRenderBackgroundpng32828(CCmdUI *pCmdUI)
+{
+	//pCmdUI->SetCheck(m_bRender&&m_bkgPng);
+}
+
+
+void CCGWorkView::OnBackgroundpngStrentch()
+{
+	if (m_bkgPng&&m_isStretch){
+		m_bkgPng = false;
+	}
+	else{
+		m_bkgPng = true;
+		m_isStretch = true;
+	}
+	if (m_bkgPng == true){
+		CString   path;
+		CFileDialog  Dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "PNG Files(*.png)|*.png|All Files(*.*)|*.*");
+		if (Dlg.DoModal() == IDOK)
+		{
+			m_pathPNG = Dlg.GetPathName();
+			PngWrapper pwrapper(m_pathPNG);
+			if (pwrapper.ReadPng() == false){
+				AfxMessageBox("Not an PNG file!");
+				m_bkgPng = false;
+				return;
+			}
+		}
+		else
+		{
+			MessageBox("Failure", NULL, MB_OK);
+		}
+	}
+	Invalidate();
+}
+
+
+void CCGWorkView::OnBackgroundpngRepeat()
+{
+	if (m_bkgPng&&!m_isStretch){
+		m_bkgPng = false;
+	}
+	else{
+		m_bkgPng = true;
+		m_isStretch = false;
+	}
+	if (m_bkgPng == true){
+		CString   path;
+		CFileDialog  Dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "PNG Files(*.png)|*.png|All Files(*.*)|*.*");
+		if (Dlg.DoModal() == IDOK)
+		{
+			m_pathPNG = Dlg.GetPathName();
+			PngWrapper pwrapper(m_pathPNG);
+			if (pwrapper.ReadPng() == false){
+				AfxMessageBox("Not an PNG file!");
+				m_bkgPng = false;
+				return;
+			}
+		}
+		else
+		{
+			MessageBox("Failure", NULL, MB_OK);
+		}
+	}
+	Invalidate();
+}
+
+
+void CCGWorkView::OnUpdateBackgroundpngStrentch(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bkgPng&&m_isStretch);
+}
+
+
+void CCGWorkView::OnUpdateBackgroundpngRepeat(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_bkgPng&&!m_isStretch);
 }

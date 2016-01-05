@@ -194,6 +194,7 @@
     </ClCompile>
     <ClCompile Include="DialogChangeColor.cpp" />
     <ClCompile Include="DialogFineness.cpp" />
+    <ClCompile Include="DialogSelectSize.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="iritSkel.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="CGWorkView.h" />
     <ClInclude Include="DialogChangeColor.h" />
     <ClInclude Include="DialogFineness.h" />
+    <ClInclude Include="DialogSelectSize.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="iritSkel.h" />

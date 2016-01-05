@@ -13,6 +13,53 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Chinese (Simplified, PRC) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SELECT_SIZE DIALOGEX 0, 0, 310, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,199,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,253,155,50,14
+    LTEXT           "Select size: ",IDC_STATIC,47,64,74,14
+    EDITTEXT        IDC_EDIT1,174,63,40,14,ES_AUTOHSCROLL
+    LTEXT           "%",IDC_STATIC,216,66,8,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_SELECT_SIZE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Chinese (Simplified, PRC) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
@@ -277,7 +324,17 @@ BEGIN
     POPUP "Rendering"
     BEGIN
         MENUITEM "Wireframe",                   ID_RENDERING_WIREFRAME
-        MENUITEM "Render",                      ID_RENDERING_RENDER
+        POPUP "Render"
+        BEGIN
+            MENUITEM "On Screen",                   ID_RENDER_ONSCREEN
+            MENUITEM "To File",                     ID_RENDER_TOFILE
+            MENUITEM SEPARATOR
+            POPUP "Background PNG"
+            BEGIN
+                MENUITEM "Stretch",                     ID_BACKGROUNDPNG_STRENTCH
+                MENUITEM "Repeat",                      ID_BACKGROUNDPNG_REPEAT
+            END
+        END
     END
     POPUP "Normal"
     BEGIN

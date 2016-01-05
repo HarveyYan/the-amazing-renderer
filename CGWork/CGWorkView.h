@@ -40,12 +40,17 @@ private:
 	int m_nAxis;					 // Axis of Action, X Y or Z
 	int m_nAction;					 // Rotate, Translate, Scale
 	int m_nView;					 // Orthographic, perspective
+	int m_size;
 	bool m_bIsPerspective;			 // is the view perspective
 	bool m_tObjectSpace;			 // transformations take place in object space
 	bool m_showPolyNormals;
 	bool m_showVertexNormals;
+	bool m_toFile;
+	bool m_bkgPng;
+	bool m_isStretch;
 	
 	CString m_strItdFileName;		 // file name of IRIT data
+	CString m_pathPNG;
 
 	int m_nLightShading;			 // shading: Flat, Gouraud.
 
@@ -212,6 +217,16 @@ public:
 	afx_msg void OnOptionsShowsilhouette();
 	afx_msg void OnUpdateOptionsShowsilhouette(CCmdUI *pCmdUI);
 	afx_msg void OnActionClearall();
+	afx_msg void OnRenderOnscreen();
+	afx_msg void OnRenderTofile();
+	afx_msg void OnUpdateRenderOnscreen(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateRenderTofile(CCmdUI *pCmdUI);
+	afx_msg void OnRenderBackgroundpng32828();
+	afx_msg void OnUpdateRenderBackgroundpng32828(CCmdUI *pCmdUI);
+	afx_msg void OnBackgroundpngStrentch();
+	afx_msg void OnBackgroundpngRepeat();
+	afx_msg void OnUpdateBackgroundpngStrentch(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateBackgroundpngRepeat(CCmdUI *pCmdUI);
 };
 
 void drawAxis(CDC* pDC, const Matrix4d & transMat, const Matrix4d & screenMat);

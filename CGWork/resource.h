@@ -12,6 +12,7 @@
 #define IDD_CAMERA_DLG                  140
 #define IDD_DIALOG_CHANGE_COLOR         141
 #define IDD_FINENESS_CONTROL            142
+#define IDD_SELECT_SIZE                 143
 #define IDC_LIGHT_SPACE                 1010
 #define IDC_RADIO_LIGHT1                1017
 #define IDC_RADIO_LIGHT2                1018
@@ -91,13 +92,20 @@
 #define ID_BUTTON32820                  32820
 #define ID_BUTTON32822                  32822
 #define ID_BUTTON32823                  32823
+#define ID_RENDER_ONSCREEN              32824
+#define ID_RENDER_TOFILE                32825
+#define ID_RENDER_BACKGROUNDPNG         32826
+#define ID_RENDER_                      32827
+#define ID_RENDER_BACKGROUNDPNG32828    32828
+#define ID_BACKGROUNDPNG_STRENTCH       32829
+#define ID_BACKGROUNDPNG_REPEAT         32830
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        143
-#define _APS_NEXT_COMMAND_VALUE         32824
+#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_COMMAND_VALUE         32831
 #define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
